@@ -1,0 +1,2090 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nearme — Find trusted local services</title>
+    <style>
+        /* 1. Basic page styles */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f7f8f5;
+            color: #1d2d25;
+            font-family: Arial, sans-serif;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .wrap {
+            width: min(1120px, 92%);
+            margin: auto;
+        }
+
+        /* 2. Navigation bar */
+        .topbar {
+            background: white;
+            border-bottom: 1px solid #e8ece7;
+        }
+
+        nav {
+            min-height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .logo {
+            color: #183a2a;
+            font-size: 22px;
+            font-weight: 800;
+            text-decoration: none;
+            letter-spacing: -1px;
+        }
+
+        .logo span {
+            color: #54a06f;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .nav-links a {
+            color: #657169;
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        .nav-links a:hover {
+            color: #24714a;
+        }
+
+        .provider-link {
+            border: 1px solid #dce5dc;
+            border-radius: 8px;
+            padding: 11px 15px;
+            color: #24583a !important;
+            font-weight: 700;
+        }
+
+        /* 3. Hero and search area */
+        .hero {
+            padding: 48px 0 38px;
+            overflow: hidden;
+        }
+
+        .hero-panel {
+            min-height: 350px;
+            padding: 48px 55px;
+            border-radius: 22px;
+            background: linear-gradient(112deg, #e9f3e9 0%, #eff5ea 58%, #e0eddf 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-copy {
+            width: 62%;
+            position: relative;
+            z-index: 2;
+        }
+
+        .eyebrow {
+            color: #378054;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            max-width: 550px;
+            margin: 13px 0;
+            font-size: clamp(36px, 5vw, 56px);
+            line-height: 1.04;
+            letter-spacing: -2.6px;
+        }
+
+        .hero-copy>p {
+            max-width: 470px;
+            color: #66746a;
+            line-height: 1.65;
+            font-size: 15px;
+        }
+
+        .search {
+            max-width: 690px;
+            margin-top: 25px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px;
+            background: white;
+            border: 1px solid #e8ece6;
+            border-radius: 12px;
+            box-shadow: 0 12px 28px #24412c12;
+        }
+
+        .search label {
+            min-width: 145px;
+            padding: 0 10px;
+            color: #89938b;
+            font-size: 10px;
+        }
+
+        .search label+label {
+            border-left: 1px solid #e9ede8;
+        }
+
+        .search input,
+        .search select {
+            width: 100%;
+            margin-top: 6px;
+            border: 0;
+            outline: 0;
+            color: #25352b;
+            background: transparent;
+            font-size: 13px;
+        }
+
+        .search select {
+            cursor: pointer;
+        }
+
+        .location-input {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .location-input input {
+            min-width: 0;
+        }
+
+        .location-btn {
+            border: 0;
+            border-radius: 6px;
+            padding: 5px 7px;
+            background: #edf5ed;
+            color: #286b45;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .location-btn:hover {
+            background: #dceedd;
+        }
+
+        .location-status {
+            min-height: 15px;
+            margin: 8px 0 0 4px;
+            color: #477653;
+            font-size: 11px;
+        }
+
+        .primary-btn {
+            border: 0;
+            border-radius: 8px;
+            padding: 14px 19px;
+            background: #286b45;
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .primary-btn:hover {
+            background: #1e5637;
+        }
+
+        .hero-art {
+            position: absolute;
+            right: 48px;
+            top: 32px;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: #d4e8d1;
+            display: grid;
+            place-items: center;
+        }
+
+        .house {
+            width: 178px;
+            height: 150px;
+            position: relative;
+            margin-top: 28px;
+            border-radius: 15px 15px 7px 7px;
+            background: white;
+            box-shadow: 0 16px 28px #3766441b;
+        }
+
+        .roof {
+            position: absolute;
+            left: -18px;
+            top: -54px;
+            width: 214px;
+            height: 110px;
+            background: #34754c;
+            transform: rotate(45deg) scale(.72);
+            border-radius: 8px;
+        }
+
+        .house-front {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            border-radius: 15px 15px 7px 7px;
+        }
+
+        .window {
+            position: absolute;
+            top: 26px;
+            left: 23px;
+            width: 38px;
+            height: 38px;
+            background: #e2f0e5;
+            border-radius: 5px;
+            border: 3px solid #bdd9c2;
+        }
+
+        .door {
+            position: absolute;
+            bottom: 0;
+            right: 23px;
+            width: 45px;
+            height: 79px;
+            background: #d3e7d4;
+            border-radius: 7px 7px 0 0;
+        }
+
+        .door:after {
+            content: '';
+            position: absolute;
+            right: 7px;
+            top: 39px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #598866;
+        }
+
+        .art-tag {
+            position: absolute;
+            right: -4px;
+            bottom: 30px;
+            border-radius: 10px;
+            padding: 12px 14px;
+            background: white;
+            box-shadow: 0 8px 22px #24412c18;
+            font-size: 11px;
+            color: #657169;
+        }
+
+        .art-tag b {
+            display: block;
+            margin-bottom: 4px;
+            color: #24372b;
+            font-size: 13px;
+        }
+
+        .proof {
+            display: flex;
+            gap: 20px;
+            margin-top: 16px;
+            color: #6d796f;
+            font-size: 11px;
+        }
+
+        .proof span:first-child {
+            color: #347b50;
+        }
+
+        /* 4. Service categories and provider cards */
+        .section {
+            padding: 14px 0 32px;
+        }
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            margin-bottom: 17px;
+        }
+
+        .section-heading h2 {
+            margin: 6px 0 0;
+            font-size: 23px;
+            letter-spacing: -.7px;
+        }
+
+        .section-heading p {
+            margin: 0;
+            color: #879087;
+            font-size: 12px;
+        }
+
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-bottom: 27px;
+        }
+
+        .category {
+            padding: 9px 14px;
+            border: 1px solid #e2e8e1;
+            border-radius: 99px;
+            background: white;
+            color: #5a665d;
+            font-size: 12px;
+        }
+
+        .category:hover,
+        .category.active {
+            border-color: #286b45;
+            background: #286b45;
+            color: white;
+        }
+
+        .provider-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .provider-card {
+            overflow: hidden;
+            border: 1px solid #e8ece7;
+            border-radius: 13px;
+            background: white;
+            transition: transform .18s, box-shadow .18s;
+        }
+
+        .provider-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 26px #19372310;
+        }
+
+        .card-cover {
+            height: 105px;
+            padding: 13px;
+            background: linear-gradient(120deg, #edf4eb, #f6f4e9);
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+
+        .service-icon {
+            width: 53px;
+            height: 53px;
+            display: grid;
+            place-items: center;
+            border-radius: 13px;
+            background: white;
+            font-size: 26px;
+            box-shadow: 0 3px 10px #23432a0e;
+        }
+
+        .verified {
+            border: 1px solid #d8e9dc;
+            border-radius: 99px;
+            padding: 6px 9px;
+            background: #f7fcf7;
+            color: #39774b;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .card-content {
+            padding: 15px;
+        }
+
+        .name-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .name-row h3 {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .rating {
+            color: #a97822;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .service-name {
+            margin: 6px 0 12px;
+            color: #78827a;
+            font-size: 12px;
+        }
+
+        .card-info {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #edf0ec;
+            padding-top: 12px;
+            color: #778178;
+            font-size: 11px;
+        }
+
+        .card-contact {
+            margin-top: 10px;
+            font-size: 11px;
+        }
+
+        .card-contact a {
+            color: #286b45;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .card-contact span {
+            color: #929a93;
+        }
+
+        .card-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .price {
+            color: #27392d;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .price small {
+            display: block;
+            margin-top: 3px;
+            color: #909991;
+            font-size: 10px;
+            font-weight: 400;
+        }
+
+        .book-btn {
+            border: 0;
+            border-radius: 7px;
+            padding: 10px 12px;
+            background: #edf5ed;
+            color: #286b45;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .book-btn:hover {
+            background: #dceedd;
+        }
+
+        #result-message {
+            min-height: 18px;
+            margin: -14px 0 12px;
+            color: #778178;
+            font-size: 12px;
+        }
+
+        .load-more-wrap {
+            display: flex;
+            justify-content: center;
+            margin: 21px 0 4px;
+        }
+
+        .load-more-btn {
+            border: 1px solid #d5e1d6;
+            border-radius: 8px;
+            padding: 11px 18px;
+            background: white;
+            color: #286b45;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .load-more-btn:hover {
+            background: #edf5ed;
+        }
+
+        .empty {
+            grid-column: 1 / -1;
+            border: 1px dashed #ccd8cc;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            color: #69766c;
+            background: white;
+        }
+
+        .appointments-section {
+            margin: 10px 0 34px;
+        }
+
+        .appointment-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .appointment-card {
+            padding: 18px;
+            border: 1px solid #e4eae3;
+            border-radius: 12px;
+            background: white;
+        }
+
+        .appointment-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 14px;
+        }
+
+        .appointment-top h3 {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .appointment-top p {
+            margin: 5px 0 0;
+            color: #768178;
+            font-size: 12px;
+        }
+
+        .appointment-status {
+            border-radius: 99px;
+            padding: 6px 9px;
+            background: #edf5ed;
+            color: #286b45;
+            font-size: 10px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .appointment-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 14px 0;
+            color: #68746b;
+            font-size: 11px;
+        }
+
+        .complete-btn,
+        .review-submit {
+            border: 0;
+            border-radius: 7px;
+            padding: 10px 13px;
+            background: #286b45;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .complete-btn:hover,
+        .review-submit:hover {
+            background: #1e5637;
+        }
+
+        .review-form {
+            border-top: 1px solid #edf0ec;
+            padding-top: 14px;
+        }
+
+        .review-form label {
+            display: block;
+            margin: 10px 0 6px;
+            color: #536258;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .review-form select,
+        .review-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dce4dc;
+            border-radius: 7px;
+            background: white;
+            color: #25352b;
+            font: 12px Arial, sans-serif;
+        }
+
+        .review-form textarea {
+            min-height: 75px;
+            resize: vertical;
+        }
+
+        .review-saved {
+            border-top: 1px solid #edf0ec;
+            padding-top: 12px;
+            color: #526158;
+            font-size: 12px;
+        }
+
+        .review-saved strong {
+            color: #a97822;
+        }
+
+        .review-saved p {
+            margin: 8px 0 0;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+
+        .featured-section {
+            margin: 2px 0 34px;
+            padding: 22px;
+            border: 1px solid #e5e9dd;
+            border-radius: 16px;
+            background: linear-gradient(120deg, #f0f4e9, #f8f7ef);
+        }
+
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 17px;
+        }
+
+        .ad-card {
+            overflow: hidden;
+            border: 1px solid #e5e8df;
+            border-radius: 11px;
+            background: white;
+        }
+
+        .ad-art {
+            min-height: 90px;
+            padding: 12px;
+            background: linear-gradient(130deg, #e4efdf, #f5f2e4);
+            display: flex;
+            align-items: start;
+            justify-content: space-between;
+        }
+
+        .ad-icon {
+            width: 54px;
+            height: 54px;
+            display: grid;
+            place-items: center;
+            border-radius: 13px;
+            background: white;
+            font-size: 27px;
+            box-shadow: 0 4px 12px #1b3b2410;
+        }
+
+        .sponsored-tag {
+            border-radius: 99px;
+            padding: 6px 8px;
+            background: #fff;
+            color: #7b6b32;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .4px;
+            text-transform: uppercase;
+        }
+
+        .ad-content {
+            padding: 13px;
+        }
+
+        .ad-content h3 {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .ad-content p {
+            min-height: 30px;
+            margin: 6px 0 10px;
+            color: #778178;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .ad-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 11px;
+            color: #647168;
+            font-size: 10px;
+        }
+
+        .ad-meta b {
+            color: #a97822;
+        }
+
+        .ad-button {
+            width: 100%;
+            border: 0;
+            border-radius: 7px;
+            padding: 10px;
+            background: #286b45;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .ad-button:hover {
+            background: #1e5637;
+        }
+
+        .featured-optin {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: start;
+            gap: 8px;
+            border-radius: 8px;
+            padding: 11px;
+            background: #f6f8f3;
+            color: #536258 !important;
+            font-weight: 400 !important;
+            line-height: 1.5;
+        }
+
+        .featured-optin input {
+            width: auto;
+            margin: 2px 0 0;
+        }
+
+        .join-section {
+            margin: 18px 0 42px;
+            padding: 27px;
+            border: 1px solid #e4eae2;
+            border-radius: 15px;
+            background: white;
+        }
+
+        .join-section h2 {
+            margin: 6px 0;
+            font-size: 23px;
+            letter-spacing: -.7px;
+        }
+
+        .join-section>p {
+            margin: 0 0 20px;
+            color: #78827a;
+            font-size: 12px;
+        }
+
+        .provider-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        .provider-form label {
+            color: #647168;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .provider-form input,
+        .provider-form select {
+            display: block;
+            width: 100%;
+            margin-top: 7px;
+            padding: 12px;
+            border: 1px solid #dfe6de;
+            border-radius: 7px;
+            background: white;
+            color: #25352b;
+            font-size: 13px;
+        }
+
+        .provider-form .submit-row {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        #form-message {
+            color: #347b50;
+            font-size: 12px;
+        }
+
+        /* 5. Booking pop-up and footer */
+        dialog {
+            width: min(420px, 90%);
+            padding: 25px;
+            border: 0;
+            border-radius: 15px;
+            box-shadow: 0 18px 60px #1228193d;
+            color: #24352b;
+        }
+
+        dialog::backdrop {
+            background: #17281f80;
+        }
+
+        dialog h2 {
+            margin: 0 0 7px;
+            font-size: 21px;
+        }
+
+        dialog p {
+            color: #69766c;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        dialog label {
+            display: block;
+            margin: 16px 0 6px;
+            color: #647168;
+            font-size: 12px;
+        }
+
+        dialog input {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #dce4dc;
+            border-radius: 7px;
+        }
+
+        .dialog-actions {
+            display: flex;
+            justify-content: end;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .secondary-btn {
+            border: 1px solid #dce4dc;
+            border-radius: 7px;
+            padding: 10px 13px;
+            background: white;
+            color: #58665d;
+        }
+
+        footer {
+            margin-top: 12px;
+            padding: 22px 0;
+            border-top: 1px solid #e6eae5;
+            color: #8a948c;
+            font-size: 11px;
+        }
+
+        footer .wrap {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        /* 6. Auth modal and user menu */
+        .auth-btn {
+            border: 0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #286b45;
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .auth-btn:hover {
+            background: #1e5637;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-email {
+            color: #3a5d44;
+            font-size: 11px;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .logout-btn {
+            border: 1px solid #dce5dc;
+            border-radius: 7px;
+            padding: 8px 12px;
+            background: white;
+            color: #58665d;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .logout-btn:hover {
+            background: #f5f8f5;
+        }
+
+        .auth-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #17281f80;
+            z-index: 1000;
+            place-items: center;
+        }
+
+        .auth-overlay.open {
+            display: grid;
+        }
+
+        .auth-card {
+            width: min(400px, 90%);
+            padding: 30px;
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 20px 60px #1228193d;
+        }
+
+        .auth-card h2 {
+            margin: 0 0 6px;
+            font-size: 22px;
+            letter-spacing: -.5px;
+        }
+
+        .auth-card .subtitle {
+            margin: 0 0 22px;
+            color: #78827a;
+            font-size: 13px;
+        }
+
+        .auth-card label {
+            display: block;
+            margin: 14px 0 5px;
+            color: #647168;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .auth-card input {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #dce4dc;
+            border-radius: 7px;
+            font-size: 13px;
+        }
+
+        .auth-card input:focus {
+            outline: 2px solid #286b45;
+            outline-offset: -1px;
+            border-color: transparent;
+        }
+
+        .auth-submit {
+            width: 100%;
+            margin-top: 18px;
+            border: 0;
+            border-radius: 8px;
+            padding: 13px;
+            background: #286b45;
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .auth-submit:hover {
+            background: #1e5637;
+        }
+
+        .auth-submit:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+        .auth-toggle {
+            margin-top: 16px;
+            text-align: center;
+            color: #78827a;
+            font-size: 12px;
+        }
+
+        .auth-toggle a {
+            color: #286b45;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .auth-toggle a:hover {
+            text-decoration: underline;
+        }
+
+        .auth-message {
+            min-height: 16px;
+            margin-top: 12px;
+            text-align: center;
+            font-size: 12px;
+            color: #c0392b;
+        }
+
+        .auth-message.success {
+            color: #347b50;
+        }
+
+        .auth-close {
+            float: right;
+            border: 0;
+            background: none;
+            font-size: 20px;
+            color: #8a948c;
+            padding: 0 0 10px 10px;
+        }
+
+        .auth-close:hover {
+            color: #1d2d25;
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            margin: 18px 0 14px;
+            color: #9aa49d;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #e6ede6;
+        }
+
+        .auth-divider span {
+            padding: 0 10px;
+        }
+
+        .oauth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .oauth-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #dce4dc;
+            border-radius: 8px;
+            background: white;
+            color: #24352b;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .oauth-btn:hover {
+            background: #f7faf7;
+            border-color: #286b45;
+        }
+
+        .oauth-btn svg {
+            width: 17px;
+            height: 17px;
+            flex-shrink: 0;
+        }
+
+        /* 7. Mobile layout */
+        @media (max-width: 760px) {
+            .nav-links {
+                gap: 12px;
+            }
+
+            .nav-links a:not(.provider-link) {
+                display: none;
+            }
+
+            .hero {
+                padding-top: 22px;
+            }
+
+            .hero-panel {
+                padding: 35px 25px;
+            }
+
+            .hero-copy {
+                width: 100%;
+            }
+
+            .hero-art {
+                opacity: .13;
+                right: -50px;
+                top: 55px;
+            }
+
+            .search {
+                flex-wrap: wrap;
+            }
+
+            .search label {
+                flex: 1 1 40%;
+            }
+
+            .search label+label {
+                border-left: 0;
+            }
+
+            .search .primary-btn {
+                width: 100%;
+            }
+
+            .provider-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .featured-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .provider-form {
+                grid-template-columns: 1fr;
+            }
+
+            .provider-form .submit-row {
+                grid-column: auto;
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .hero-panel {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 39px;
+            }
+
+            .proof {
+                flex-direction: column;
+                gap: 7px;
+            }
+
+            .provider-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .featured-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-heading {
+                align-items: start;
+                flex-direction: column;
+                gap: 7px;
+            }
+
+            footer .wrap {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="topbar">
+        <nav class="wrap">
+            <a class="logo" href="#home">nearme<span>.</span></a>
+            <div class="nav-links">
+                <a href="#services">Explore services</a>
+                <a href="#my-appointments">My appointments</a>
+                <a href="#how-it-works">How it works</a>
+                <a class="provider-link" href="#list-service">List your service&nbsp; ↗</a>
+                <a href="admin.html" style="font-size: 13px; color: #24714a; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" title="Admin Dashboard">🛡️ Admin</a>
+                <!-- Auth: shown when logged out -->
+                <button id="nav-login-btn" class="auth-btn" onclick="openAuth()">Sign in</button>
+                <!-- Auth: shown when logged in -->
+                <div id="nav-user-menu" class="user-menu" style="display:none;">
+                    <span id="nav-user-email" class="user-email"></span>
+                    <button class="logout-btn" onclick="logoutUser()">Log out</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main id="home" class="wrap">
+        <section class="hero">
+            <div class="hero-panel">
+                <div class="hero-copy">
+                    <div class="eyebrow">Good people, right around the corner</div>
+                    <h1>Local help for your everyday needs.</h1>
+                    <p>Find trusted professionals in your neighbourhood. Compare ratings, check prices and book a time
+                        that works for you.</p>
+                    <div class="search">
+                        <label>WHAT DO YOU NEED?
+                            <select id="service-search">
+                                <option value="all">All services</option>
+                                <option value="Plumber">Plumbing</option>
+                                <option value="Electrician">Electrical</option>
+                                <option value="Cleaner">Home cleaning</option>
+                                <option value="Carpenter">Carpentry</option>
+                                <option value="Painter">Painting</option>
+                                <option value="AC Repair">AC repair</option>
+                                <option value="Appliance Repair">Appliance repair</option>
+                                <option value="Pest Control">Pest control</option>
+                                <option value="Mechanic">Vehicle mechanic</option>
+                                <option value="Tutor">Tutoring</option>
+                                <option value="Gardener">Gardening</option>
+                                <option value="Beauty & Salon">Beauty &amp; salon</option>
+                            </select>
+                        </label>
+                        <label>YOUR LOCATION
+                            <span class="location-input"><input id="area-search" type="text" list="area-options"
+                                    placeholder="Enter your area"><datalist id="area-options">
+                                    <option value="Kharar">
+                                    <option value="Sector 55 Mohali">
+                                    <option value="Sector 54 Mohali">
+                                    <option value="Sector 16 Chandigarh">
+                                    <option value="Sector 18 Chandigarh">
+                                    <option value="Sector 19 Chandigarh">
+                                    <option value="Sector 20 Chandigarh">
+                                    <option value="Sector 22 Chandigarh">
+                                </datalist><button class="location-btn" type="button" onclick="useMyLocation()"
+                                    title="Find services near your current location">◎ Near me</button></span>
+                        </label>
+                        <button class="primary-btn" onclick="searchProviders()">Find a pro&nbsp; →</button>
+                    </div>
+                    <p id="location-status" class="location-status" aria-live="polite"></p>
+                    <div class="proof"><span>✓ &nbsp;Local professionals</span><span>★ &nbsp;Ratings from your
+                            community</span></div>
+                </div>
+                <div class="hero-art" aria-hidden="true">
+                    <div class="house">
+                        <div class="roof"></div>
+                        <div class="house-front">
+                            <div class="window"></div>
+                            <div class="door"></div>
+                        </div>
+                    </div>
+                    <div class="art-tag"><b>⌂ &nbsp;48 pros per area</b>Ready to lend a hand</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="featured" class="featured-section">
+            <div class="section-heading">
+                <div>
+                    <div class="eyebrow">Sponsored spotlights · Demo ad placements</div>
+                    <h2>Featured providers in your area</h2>
+                </div>
+                <p>Local businesses promoting their services</p>
+            </div>
+            <div id="featured-list" class="featured-grid"></div>
+        </section>
+
+        <section id="services" class="section">
+            <div class="section-heading">
+                <div>
+                    <div class="eyebrow">Neighbourhood favourites</div>
+                    <h2>Find the right person for the job</h2>
+                </div>
+                <p>Sample providers for the college project</p>
+            </div>
+            <div class="categories">
+                <button class="category active" onclick="chooseCategory('all', this)">All services</button>
+                <button class="category" onclick="chooseCategory('Plumber', this)">🔧 &nbsp;Plumbers</button>
+                <button class="category" onclick="chooseCategory('Electrician', this)">⚡ &nbsp;Electricians</button>
+                <button class="category" onclick="chooseCategory('Cleaner', this)">🧹 &nbsp;Cleaning</button>
+                <button class="category" onclick="chooseCategory('Carpenter', this)">🪚 &nbsp;Carpenters</button>
+                <button class="category" onclick="chooseCategory('Painter', this)">🎨 &nbsp;Painters</button>
+                <button class="category" onclick="chooseCategory('AC Repair', this)">❄️ &nbsp;AC repair</button>
+                <button class="category" onclick="chooseCategory('Appliance Repair', this)">🧰 &nbsp;Appliance
+                    repair</button>
+                <button class="category" onclick="chooseCategory('Pest Control', this)">🐜 &nbsp;Pest control</button>
+                <button class="category" onclick="chooseCategory('Mechanic', this)">🚗 &nbsp;Mechanics</button>
+                <button class="category" onclick="chooseCategory('Tutor', this)">📚 &nbsp;Tutors</button>
+                <button class="category" onclick="chooseCategory('Gardener', this)">🪴 &nbsp;Gardeners</button>
+                <button class="category" onclick="chooseCategory('Beauty & Salon', this)">💇 &nbsp;Beauty &amp;
+                    salon</button>
+            </div>
+            <p id="result-message"></p>
+            <div id="provider-list" class="provider-grid"></div>
+            <div class="load-more-wrap"><button id="load-more" class="load-more-btn" onclick="loadMoreProviders()"
+                    hidden>Load more providers</button></div>
+        </section>
+
+        <section id="my-appointments" class="appointments-section">
+            <div class="section-heading">
+                <div>
+                    <div class="eyebrow">Your bookings</div>
+                    <h2>My appointments</h2>
+                </div>
+                <p>After the job is done, mark it complete and leave a review.</p>
+            </div>
+            <div id="appointment-list" class="appointment-list"></div>
+        </section>
+
+        <section id="list-service" class="join-section">
+            <div class="eyebrow">For local professionals</div>
+            <h2>Offer a service in your neighbourhood?</h2>
+            <p>Add your details to the nearme directory.</p>
+            <form id="provider-form" class="provider-form">
+                <label>Your name or business name
+                    <input id="new-name" type="text" placeholder="e.g. Rakesh Plumbing" required maxlength="60">
+                </label>
+                <label>Service you offer
+                    <select id="new-service" required>
+                        <option value="">Choose a service</option>
+                        <option value="Plumber">Plumber</option>
+                        <option value="Electrician">Electrician</option>
+                        <option value="Cleaner">Home cleaner</option>
+                        <option value="Carpenter">Carpenter</option>
+                        <option value="Painter">Painter</option>
+                        <option value="AC Repair">AC repair technician</option>
+                        <option value="Appliance Repair">Appliance repair</option>
+                        <option value="Pest Control">Pest control</option>
+                        <option value="Mechanic">Vehicle mechanic</option>
+                        <option value="Tutor">Tutor</option>
+                        <option value="Gardener">Gardener</option>
+                        <option value="Beauty & Salon">Beauty &amp; salon professional</option>
+                    </select>
+                </label>
+                <label>Your service area
+                    <select id="new-area" required>
+                        <option value="">Choose a neighbourhood</option>
+                        <option>Kharar</option>
+                        <option>Sector 55 Mohali</option>
+                        <option>Sector 54 Mohali</option>
+                        <option>Sector 16 Chandigarh</option>
+                        <option>Sector 18 Chandigarh</option>
+                        <option>Sector 19 Chandigarh</option>
+                        <option>Sector 20 Chandigarh</option>
+                        <option>Sector 22 Chandigarh</option>
+                    </select>
+                </label>
+                <label>Phone number
+                    <input id="new-phone" type="tel" placeholder="e.g. 98765 43210" required maxlength="20">
+                </label>
+                <label>Starting price (₹)
+                    <input id="new-price" type="number" min="1" placeholder="e.g. 299" required>
+                </label>
+                <label class="featured-optin"><input id="new-featured" type="checkbox"> Request a sponsored featured
+                    spot for my listing (demo only; no payment is processed).</label>
+                <div class="submit-row"><button class="primary-btn" type="submit">Add my service&nbsp; →</button><span
+                        id="form-message" aria-live="polite"></span></div>
+            </form>
+        </section>
+    </main>
+
+    <footer id="how-it-works">
+        <div class="wrap" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+            <span><b>nearme.</b> &nbsp;Local help, made easy.</span>
+            <span>Find a pro · Book a visit · Get the job done</span>
+            <a href="admin.html" style="color: inherit; opacity: 0.8; text-decoration: none; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(0,0,0,0.15); display: inline-flex; align-items: center; gap: 5px;">
+                🛡️ Admin Operations ↗
+            </a>
+        </div>
+    </footer>
+
+    <dialog id="booking-dialog">
+        <form id="booking-form" onsubmit="confirmBooking(event)">
+            <h2>Request an appointment</h2>
+            <p id="booking-provider">Choose a convenient time and leave your phone number.</p>
+            <label for="booking-date">Preferred date</label>
+            <input id="booking-date" type="date" required>
+            <label for="booking-phone">Your phone number</label>
+            <input id="booking-phone" type="tel" placeholder="e.g. 98765 43210" required>
+            <div class="dialog-actions"><button class="secondary-btn" type="button"
+                    onclick="closeBookingDialog()">Cancel</button><button class="primary-btn" type="submit">Confirm
+                    appointment</button></div>
+        </form>
+    </dialog>
+
+    <!-- Auth Modal -->
+    <div id="auth-overlay" class="auth-overlay" onclick="if(event.target===this)closeAuth()">
+        <div class="auth-card">
+            <button class="auth-close" onclick="closeAuth()">✕</button>
+            <h2 id="auth-title">Sign in</h2>
+            <p class="subtitle" id="auth-subtitle">Welcome back to nearme.</p>
+            <form id="auth-form" onsubmit="handleAuth(event)">
+                <label for="auth-email">Email address</label>
+                <input id="auth-email" type="email" placeholder="you@example.com" required>
+                <label for="auth-password">Password</label>
+                <input id="auth-password" type="password" placeholder="Your password" required minlength="6">
+                <button class="auth-submit" type="submit" id="auth-submit-btn">Sign in</button>
+            </form>
+            <div class="auth-divider"><span>or continue with</span></div>
+            <div class="oauth-buttons">
+                <button type="button" class="oauth-btn" onclick="loginWithOAuth('google')">
+                    <svg viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                    </svg>
+                    Continue with Google
+                </button>
+                <button type="button" class="oauth-btn" onclick="loginWithOAuth('github')">
+                    <svg viewBox="0 0 24 24" fill="#24292e">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                    </svg>
+                    Continue with GitHub
+                </button>
+            </div>
+            <p id="auth-message" class="auth-message"></p>
+            <p class="auth-toggle" id="auth-toggle">
+                Don't have an account? <a onclick="switchAuthMode()">Sign up</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Supabase project settings: replace these with your project's API URL and anon key.
+        const SUPABASE_URL = "https://gtdlebyvwnpmpeqwcosa.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_vd3-cZp1Vbx5Nh5ysABDuw_qYxnmJ3Z";
+        const sb = window.supabase && SUPABASE_URL.includes(".supabase.co") && !SUPABASE_URL.includes("YOUR_PROJECT_ID")
+            ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+            : null;
+        const databaseStatus = document.getElementById("form-message");
+
+        // ── Analytics & Traffic Operations Tracker ───────────────
+        const NearmeTracker = {
+            sessionId: (function () {
+                let sid = sessionStorage.getItem("nm_session_id");
+                if (!sid) {
+                    sid = "s_" + Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
+                    sessionStorage.setItem("nm_session_id", sid);
+                }
+                return sid;
+            })(),
+            getDevice: function () {
+                const ua = navigator.userAgent || "";
+                if (/mobile|android|iphone|ipod/i.test(ua)) return "Mobile";
+                if (/tablet|ipad/i.test(ua)) return "Tablet";
+                return "Desktop";
+            },
+            logEvent: async function (eventType, eventData) {
+                eventData = eventData || {};
+                const payload = {
+                    event_type: eventType,
+                    session_id: this.sessionId,
+                    device: this.getDevice(),
+                    page_path: window.location.pathname || "/",
+                    referrer: document.referrer ? (new URL(document.referrer, window.location.origin).hostname || "Referral") : "Direct",
+                    event_data: eventData,
+                    created_at: new Date().toISOString()
+                };
+
+                // 1. Buffer into local storage for immediate Admin Panel visibility
+                try {
+                    const localEvents = JSON.parse(localStorage.getItem("nearme_analytics_events") || "[]");
+                    localEvents.unshift(payload);
+                    if (localEvents.length > 500) localEvents.length = 500;
+                    localStorage.setItem("nearme_analytics_events", JSON.stringify(localEvents));
+                } catch (e) {}
+
+                // 2. Transmit to Supabase site_analytics table if configured
+                if (sb) {
+                    try {
+                        await sb.from("site_analytics").insert({
+                            event_type: payload.event_type,
+                            session_id: payload.session_id,
+                            device: payload.device,
+                            page_path: payload.page_path,
+                            referrer: payload.referrer,
+                            event_data: payload.event_data
+                        });
+                    } catch (e) {}
+                }
+            }
+        };
+
+        // Track live pageview on load
+        NearmeTracker.logEvent("pageview", { screen: window.innerWidth + "x" + window.innerHeight });
+
+        // ── Auth system ──────────────────────────────────────────
+        let currentUser = null;
+        let authMode = "login"; // "login" or "signup"
+
+        function openAuth() {
+            authMode = "login";
+            updateAuthUI();
+            document.getElementById("auth-form").reset();
+            document.getElementById("auth-message").textContent = "";
+            document.getElementById("auth-overlay").classList.add("open");
+        }
+
+        function closeAuth() {
+            document.getElementById("auth-overlay").classList.remove("open");
+        }
+
+        function switchAuthMode() {
+            authMode = authMode === "login" ? "signup" : "login";
+            updateAuthUI();
+            document.getElementById("auth-message").textContent = "";
+        }
+
+        function updateAuthUI() {
+            const title = document.getElementById("auth-title");
+            const subtitle = document.getElementById("auth-subtitle");
+            const submitBtn = document.getElementById("auth-submit-btn");
+            const toggle = document.getElementById("auth-toggle");
+            if (authMode === "login") {
+                title.textContent = "Sign in";
+                subtitle.textContent = "Welcome back to nearme.";
+                submitBtn.textContent = "Sign in";
+                toggle.innerHTML = 'Don\'t have an account? <a onclick="switchAuthMode()">Sign up</a>';
+            } else {
+                title.textContent = "Create account";
+                subtitle.textContent = "Join nearme to book and list services.";
+                submitBtn.textContent = "Create account";
+                toggle.innerHTML = 'Already have an account? <a onclick="switchAuthMode()">Sign in</a>';
+            }
+        }
+
+        async function handleAuth(event) {
+            event.preventDefault();
+            if (!sb) { showAuthMsg("Supabase is not configured.", false); return; }
+            const email = document.getElementById("auth-email").value.trim();
+            const password = document.getElementById("auth-password").value;
+            const btn = document.getElementById("auth-submit-btn");
+            btn.disabled = true;
+            showAuthMsg("", false);
+
+            try {
+                let result;
+                if (authMode === "signup") {
+                    result = await sb.auth.signUp({ email, password });
+                } else {
+                    result = await sb.auth.signInWithPassword({ email, password });
+                }
+                if (result.error) throw result.error;
+
+                if (authMode === "signup" && result.data.user && !result.data.session) {
+                    showAuthMsg("Check your email to confirm your account!", true);
+                    NearmeTracker.logEvent("auth_signup", { email: email });
+                } else {
+                    currentUser = result.data.user;
+                    refreshNavAuth();
+                    closeAuth();
+                    NearmeTracker.logEvent(authMode === "signup" ? "auth_signup" : "auth_login", { email: email });
+                }
+            } catch (err) {
+                showAuthMsg(err.message || "Something went wrong.", false);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function loginWithOAuth(provider) {
+            if (!sb) { showAuthMsg("Supabase is not configured.", false); return; }
+            showAuthMsg("", false);
+            try {
+                const redirectTarget = window.location.origin ? (window.location.origin + window.location.pathname) : window.location.href;
+                const { error } = await sb.auth.signInWithOAuth({
+                    provider: provider,
+                    options: {
+                        redirectTo: redirectTarget
+                    }
+                });
+                if (error) throw error;
+            } catch (err) {
+                showAuthMsg(err.message || "Failed to start " + provider + " sign in.", false);
+            }
+        }
+
+        function showAuthMsg(text, isSuccess) {
+            const el = document.getElementById("auth-message");
+            el.textContent = text;
+            el.className = "auth-message" + (isSuccess ? " success" : "");
+        }
+
+        async function logoutUser() {
+            if (sb) await sb.auth.signOut();
+            currentUser = null;
+            refreshNavAuth();
+        }
+
+        function refreshNavAuth() {
+            const loginBtn = document.getElementById("nav-login-btn");
+            const userMenu = document.getElementById("nav-user-menu");
+            const userEmail = document.getElementById("nav-user-email");
+            if (currentUser) {
+                loginBtn.style.display = "none";
+                userMenu.style.display = "flex";
+                userEmail.textContent = currentUser.email;
+            } else {
+                loginBtn.style.display = "";
+                userMenu.style.display = "none";
+                userEmail.textContent = "";
+            }
+        }
+
+        function requireAuth(action) {
+            if (!currentUser) {
+                openAuth();
+                showAuthMsg("Please sign in to " + action + ".", false);
+                return false;
+            }
+            return true;
+        }
+
+        // Check for existing session on load
+        async function checkSession() {
+            if (!sb) return;
+            const { data } = await sb.auth.getSession();
+            if (data.session) {
+                currentUser = data.session.user;
+                refreshNavAuth();
+            }
+            sb.auth.onAuthStateChange((_event, session) => {
+                currentUser = session ? session.user : null;
+                refreshNavAuth();
+            });
+        }
+        checkSession();
+
+        // 1. This list is sample data for the project.
+        const serviceAreas = [
+            "Kharar", "Sector 55 Mohali", "Sector 54 Mohali", "Sector 16 Chandigarh",
+            "Sector 18 Chandigarh", "Sector 19 Chandigarh", "Sector 20 Chandigarh", "Sector 22 Chandigarh"
+        ];
+
+        const areaCoordinates = {
+            "Kharar": { lat: 30.7463, lng: 76.6469 },
+            "Sector 55 Mohali": { lat: 30.7285, lng: 76.7198 },
+            "Sector 54 Mohali": { lat: 30.7250, lng: 76.7233 },
+            "Sector 16 Chandigarh": { lat: 30.7474, lng: 76.7752 },
+            "Sector 18 Chandigarh": { lat: 30.7394, lng: 76.7908 },
+            "Sector 19 Chandigarh": { lat: 30.7416, lng: 76.8000 },
+            "Sector 20 Chandigarh": { lat: 30.7213, lng: 76.7813 },
+            "Sector 22 Chandigarh": { lat: 30.7303, lng: 76.7734 }
+        };
+
+        let providers = [];
+
+        // Bookings and reviews are stored in Supabase when configured.
+        let appointments = [];
+        try {
+            appointments = JSON.parse(localStorage.getItem("nearme-appointments") || "[]");
+            if (!Array.isArray(appointments)) appointments = [];
+        } catch (error) {
+            console.log("Saved appointments could not be loaded.");
+        }
+
+        let selectedCategory = "all";
+        let selectedProvider = "";
+        let userLocation = null;
+        let visibleCount = 24;
+        let currentMatches = [];
+
+        // 2. Show matching providers as cards on the page.
+        function showProviders(list) {
+            const providerList = document.getElementById("provider-list");
+            const loadMoreButton = document.getElementById("load-more");
+            providerList.innerHTML = "";
+            showFeatured(list);
+            loadMoreButton.hidden = list.length <= visibleCount;
+
+            if (list.length === 0) {
+                providerList.innerHTML = '<div class="empty">No matching providers yet. Try another service or neighbourhood.</div>';
+                return;
+            }
+
+            list.slice(0, visibleCount).forEach(function (provider) {
+                const callNumber = String(provider.phone || "").replace(/\D/g, "");
+                providerList.innerHTML += `
+          <article class="provider-card">
+            <div class="card-cover">
+              <div class="service-icon">${provider.icon}</div>
+              <span class="verified">${provider.reviews === 0 ? "New listing" : "✓ Verified"}</span>
+            </div>
+            <div class="card-content">
+              <div class="name-row"><h3>${escapeHTML(provider.name)}</h3><span class="rating">${provider.reviews === 0 ? "New" : "★ " + escapeHTML(provider.rating)}</span></div>
+              <p class="service-name">${escapeHTML(provider.service)} service</p>
+              <div class="card-info"><span>📍 ${escapeHTML(provider.area)}${userLocation ? " · " + distanceTo(userLocation, provider).toFixed(1) + " km away" : ""}</span><span>${provider.reviews} reviews</span></div>
+              <div class="card-contact">${callNumber ? `<a href="tel:${callNumber}">☎ Call ${escapeHTML(provider.phone)}</a>` : "<span>Sample provider profile</span>"}</div>
+              <div class="card-bottom">
+                <span class="price">From ${escapeHTML(provider.price)}<small>per visit</small></span>
+                <button class="book-btn" onclick="openBooking('${escapeHTML(provider.name)}')">Book a visit&nbsp; →</button>
+              </div>
+            </div>
+          </article>`;
+            });
+        }
+
+        // Show sponsored listings that match the visitor's current search.
+        function showFeatured(list) {
+            const featuredList = document.getElementById("featured-list");
+            const featuredProviders = list.filter(function (provider) { return provider.sponsored; }).slice(0, 4);
+            featuredList.innerHTML = "";
+
+            if (featuredProviders.length === 0) {
+                featuredList.innerHTML = '<div class="empty">No featured providers match this search yet.</div>';
+                return;
+            }
+
+            featuredProviders.forEach(function (provider) {
+                featuredList.innerHTML += `
+          <article class="ad-card">
+            <div class="ad-art"><div class="ad-icon">${provider.icon}</div><span class="sponsored-tag">Sponsored</span></div>
+            <div class="ad-content">
+              <h3>${escapeHTML(provider.name)}</h3>
+              <p>${escapeHTML(provider.service)} service in ${escapeHTML(provider.area)}</p>
+              <div class="ad-meta"><b>${provider.reviews === 0 ? "New listing" : "★ " + escapeHTML(provider.rating)}</b><span>From ${escapeHTML(provider.price)}</span></div>
+              <button class="ad-button" onclick="openBooking('${escapeHTML(provider.name)}')">Book this provider&nbsp; →</button>
+            </div>
+          </article>`;
+            });
+        }
+
+        // Keep provider details safe when adding them to the page as HTML.
+        function escapeHTML(text) {
+            return String(text).replace(/[&<>"']/g, function (character) {
+                return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character];
+            });
+        }
+
+        // 3. Filter by chosen service and neighbourhood text.
+        function searchProviders() {
+            const service = document.getElementById("service-search").value;
+            const area = document.getElementById("area-search").value.trim().toLowerCase();
+            let matches = providers.filter(function (provider) {
+                const rightService = service === "all" || provider.service === service;
+                const rightArea = userLocation ? distanceTo(userLocation, provider) <= 5 : area === "" || normalizeArea(provider.area).includes(normalizeArea(area));
+                const rightCategory = selectedCategory === "all" || provider.service === selectedCategory;
+                return rightService && rightArea && rightCategory;
+            });
+
+            currentMatches = matches;
+            visibleCount = 24;
+
+            if (service !== "all" || area !== "") {
+                clearTimeout(searchProviders.debounceTimer);
+                searchProviders.debounceTimer = setTimeout(function () {
+                    if (window.NearmeTracker) {
+                        NearmeTracker.logEvent("search", { service: service, area: area, matches: matches.length });
+                    }
+                }, 700);
+            }
+
+            document.getElementById("result-message").textContent = userLocation
+                ? "Found " + matches.length + " provider(s) within 5 km of your location."
+                : "Found " + matches.length + " local provider(s).";
+            showProviders(matches);
+        }
+
+        // Reveal the next group of provider cards.
+        function loadMoreProviders() {
+            visibleCount += 24;
+            showProviders(currentMatches);
+        }
+
+        // Find providers within 5 km of the visitor, after they allow location access.
+        function useMyLocation() {
+            const status = document.getElementById("location-status");
+            if (!navigator.geolocation) {
+                status.textContent = "Your browser cannot share location. Enter your neighbourhood instead.";
+                return;
+            }
+
+            status.textContent = "Finding your location… Please allow location access in your browser.";
+            navigator.geolocation.getCurrentPosition(function (position) {
+                userLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
+                document.getElementById("area-search").value = "";
+                status.textContent = "Location found. Showing sample providers within 5 km.";
+                searchProviders();
+            }, function () {
+                status.textContent = "Could not access your location. Check browser permission or enter your neighbourhood.";
+            }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 });
+        }
+
+        // Calculate straight-line distance between two latitude/longitude points.
+        function distanceTo(start, place) {
+            const radians = function (degrees) { return degrees * Math.PI / 180; };
+            const latDifference = radians(place.lat - start.lat);
+            const lngDifference = radians(place.lng - start.lng);
+            const value = Math.sin(latDifference / 2) ** 2 +
+                Math.cos(radians(start.lat)) * Math.cos(radians(place.lat)) *
+                Math.sin(lngDifference / 2) ** 2;
+            return 6371 * 2 * Math.atan2(Math.sqrt(value), Math.sqrt(1 - value));
+        }
+
+        // Treat common entries such as "Sec-16" and "Sector 16" as the same area.
+        function normalizeArea(area) {
+            return String(area).toLowerCase().replace(/\b(sector|sec)\b/g, "").replace(/[^a-z0-9]/g, "");
+        }
+
+        // 4. Category buttons reuse the same search function.
+        function chooseCategory(category, button) {
+            selectedCategory = category;
+            if (window.NearmeTracker) {
+                NearmeTracker.logEvent("category_click", { category: category });
+            }
+            document.querySelectorAll(".category").forEach(function (item) { item.classList.remove("active"); });
+            button.classList.add("active");
+            document.getElementById("service-search").value = category;
+            searchProviders();
+        }
+
+        // Typing an area switches from GPS search back to neighbourhood search.
+        document.getElementById("area-search").addEventListener("input", function () {
+            userLocation = null;
+            document.getElementById("location-status").textContent = "";
+        });
+
+        // 5. Create a booking in Supabase.
+        function openBooking(name) {
+            if (!requireAuth("book a visit")) return;
+            selectedProvider = name;
+            document.getElementById("booking-provider").textContent = "Request a visit from " + name + ".";
+            document.getElementById("booking-dialog").showModal();
+        }
+
+        function closeBookingDialog() {
+            document.getElementById("booking-dialog").close();
+        }
+
+        async function confirmBooking(event) {
+            event.preventDefault();
+            const form = document.getElementById("booking-form");
+            if (!form.reportValidity()) return;
+
+            const provider = providers.find(function (item) { return item.name === selectedProvider; });
+            const appointment = {
+                provider: selectedProvider,
+                service: provider ? provider.service : "Local service",
+                area: provider ? provider.area : "",
+                date: document.getElementById("booking-date").value,
+                phone: document.getElementById("booking-phone").value.trim(),
+                status: "upcoming",
+                rating: 0,
+                review: ""
+            };
+
+            if (sb) {
+                const { data, error } = await sb.from("appointments").insert(appointment).select().single();
+                if (error) { alert("Could not save booking: " + error.message); return; }
+                appointments.unshift(data);
+            } else {
+                appointment.id = Date.now().toString() + Math.random().toString(36).slice(2, 7);
+                appointments.unshift(appointment);
+                saveAppointments();
+            }
+
+            form.reset();
+            closeBookingDialog();
+            renderAppointments();
+            document.getElementById("my-appointments").scrollIntoView({ behavior: "smooth" });
+        }
+
+        function saveAppointments() {
+            try {
+                localStorage.setItem("nearme-appointments", JSON.stringify(appointments));
+            } catch (error) {
+                console.log("Appointments could not be saved in this browser.");
+            }
+        }
+
+        async function updateAppointment(id, changes) {
+            if (sb) {
+                const { error } = await sb.from("appointments").update(changes).eq("id", id);
+                if (error) { alert("Could not update booking: " + error.message); return false; }
+            } else {
+                saveAppointments();
+            }
+            return true;
+        }
+
+        // Display upcoming bookings and ask for a review after a job is marked done.
+        function renderAppointments() {
+            const appointmentList = document.getElementById("appointment-list");
+            appointmentList.innerHTML = "";
+
+            if (appointments.length === 0) {
+                appointmentList.innerHTML = '<div class="empty">No appointments yet. Book a provider and it will show up here.</div>';
+                return;
+            }
+
+            appointments.forEach(function (appointment) {
+                let nextStep = `<button class="complete-btn" onclick="completeAppointment('${escapeHTML(appointment.id)}')">Mark work complete</button>`;
+
+                if (appointment.status === "completed" && appointment.rating > 0) {
+                    nextStep = `<div class="review-saved"><strong>${"★".repeat(appointment.rating)}${"☆".repeat(5 - appointment.rating)} &nbsp; Review submitted</strong><p>${escapeHTML(appointment.review)}</p></div>`;
+                } else if (appointment.status === "completed") {
+                    nextStep = `
+            <form class="review-form" onsubmit="saveReview(event, '${escapeHTML(appointment.id)}')">
+              <label for="rating-${escapeHTML(appointment.id)}">How was the service? Choose a rating</label>
+              <select id="rating-${escapeHTML(appointment.id)}" name="rating" required>
+                <option value="">Select stars</option>
+                <option value="5">★★★★★ — Excellent</option>
+                <option value="4">★★★★ — Good</option>
+                <option value="3">★★★ — Okay</option>
+                <option value="2">★★ — Poor</option>
+                <option value="1">★ — Very poor</option>
+              </select>
+              <label for="review-${escapeHTML(appointment.id)}">Write a review</label>
+              <textarea id="review-${escapeHTML(appointment.id)}" name="review" maxlength="500" placeholder="Tell others how it went..." required></textarea>
+              <button class="review-submit" type="submit">Submit review</button>
+            </form>`;
+                }
+
+                appointmentList.innerHTML += `
+          <article class="appointment-card">
+            <div class="appointment-top">
+              <div><h3>${escapeHTML(appointment.provider)}</h3><p>${escapeHTML(appointment.service)}${appointment.area ? " · " + escapeHTML(appointment.area) : ""}</p></div>
+              <span class="appointment-status">${appointment.status === "completed" ? "Work complete" : "Upcoming"}</span>
+            </div>
+            <div class="appointment-details"><span>📅 ${formatAppointmentDate(appointment.date)}</span><span>☎ ${escapeHTML(appointment.phone)}</span></div>
+            ${nextStep}
+          </article>`;
+            });
+        }
+
+        function formatAppointmentDate(date) {
+            return new Date(date + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+        }
+
+        async function completeAppointment(id) {
+            const appointment = appointments.find(function (item) { return item.id === id; });
+            if (!appointment) return;
+            appointment.status = "completed";
+            if (!await updateAppointment(id, { status: "completed" })) { appointment.status = "upcoming"; return; }
+            renderAppointments();
+        }
+
+        async function saveReview(event, id) {
+            event.preventDefault();
+            const form = event.target;
+            const appointment = appointments.find(function (item) { return item.id === id; });
+            const reviewText = form.elements.review.value.trim();
+            if (!appointment || !reviewText) return;
+
+            appointment.rating = Number(form.elements.rating.value);
+            appointment.review = reviewText;
+            if (!await updateAppointment(id, { rating: appointment.rating, review: appointment.review })) return;
+            renderAppointments();
+        }
+
+        // Add a provider to the shared directory.
+        document.getElementById("provider-form").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            if (!requireAuth("list your service")) return;
+            const form = event.currentTarget;
+            const message = document.getElementById("form-message");
+            const submitButton = form.querySelector('button[type="submit"]');
+            if (!form.reportValidity()) return;
+            const service = document.getElementById("new-service").value;
+            const area = document.getElementById("new-area").value;
+            message.textContent = "Saving your listing…";
+            submitButton.disabled = true;
+            try {
+                const icons = {
+                    Plumber: "🔧", Electrician: "⚡", Cleaner: "🧹", Carpenter: "🪚",
+                    Painter: "🎨", "AC Repair": "❄️", "Appliance Repair": "🧰",
+                    "Pest Control": "🐜", Mechanic: "🚗", Tutor: "📚",
+                    Gardener: "🪴", "Beauty & Salon": "💇"
+                };
+                const coordinates = areaCoordinates[area];
+                if (!coordinates) throw new Error("Please choose one of the listed neighbourhoods.");
+                const newProvider = {
+                    name: document.getElementById("new-name").value.trim(),
+                    service: service,
+                    area: area,
+                    phone: document.getElementById("new-phone").value.trim(),
+                    lat: coordinates.lat,
+                    lng: coordinates.lng,
+                    rating: "New",
+                    reviews: 0,
+                    price: "₹" + document.getElementById("new-price").value,
+                    icon: icons[service],
+                    sponsored: document.getElementById("new-featured").checked
+                };
+
+                if (sb) {
+                    const { data, error } = await sb.from("providers").insert({
+                        name: newProvider.name, service: newProvider.service, area: newProvider.area,
+                        phone: newProvider.phone, lat: newProvider.lat, lng: newProvider.lng,
+                        price: newProvider.price, icon: newProvider.icon, sponsored: newProvider.sponsored
+                    }).select().single();
+                    if (error) throw error;
+                    providers.push({ ...data, rating: "New", reviews: 0 });
+                } else {
+                    providers.push(newProvider);
+                    const listingsToSave = providers.filter(function (provider) { return provider.reviews === 0; });
+                    localStorage.setItem("nearyou-providers", JSON.stringify(listingsToSave));
+                }
+                document.getElementById("form-message").textContent = "Your service has been added to the directory!";
+                document.getElementById("provider-form").reset();
+                userLocation = null;
+                document.getElementById("area-search").value = "";
+                document.getElementById("service-search").value = "all";
+                selectedCategory = "all";
+                document.querySelectorAll(".category").forEach(function (button, index) {
+                    button.classList.toggle("active", index === 0);
+                });
+                searchProviders();
+                document.getElementById("services").scrollIntoView({ behavior: "smooth" });
+            } catch (error) {
+                console.error("Provider listing save failed", error);
+                message.textContent = sb
+                    ? "Could not save listing: " + (error.message || "Check the Supabase SQL setup and table permissions.")
+                    : "Supabase is not configured. Add your project URL and anon key in the page script.";
+            } finally {
+                submitButton.disabled = false;
+            }
+        });
+
+        // Load shared listings and the current browser's bookings.
+        async function initializePage() {
+            try {
+                const response = await fetch(SUPABASE_URL + "/rest/v1/providers?select=*&order=created_at.desc", {
+                    headers: { "apikey": SUPABASE_ANON_KEY, "Authorization": "Bearer " + SUPABASE_ANON_KEY }
+                });
+                const rows = await response.json().catch(function () { return []; });
+                if (!response.ok) throw new Error(rows.message || rows.hint || response.statusText);
+                // Put real listings before the large sample directory so new listings
+                // appear on the first page instead of being hidden behind Load more.
+                providers = rows.map(function (row) { return { ...row, rating: row.rating || "New", reviews: row.reviews || 0 }; }).concat(providers);
+            } catch (error) {
+                console.error("Provider load error", error);
+                document.getElementById("form-message").textContent = "Could not load Supabase providers: " + error.message;
+            }
+
+            if (sb) {
+                const appointmentResult = await sb.from("appointments").select("*").order("created_at", { ascending: false });
+                if (appointmentResult.error) {
+                    console.error("Appointment load error", appointmentResult.error);
+                    document.getElementById("form-message").textContent = "Providers loaded. Appointments could not load: " + appointmentResult.error.message;
+                } else {
+                    appointments = appointmentResult.data;
+                }
+            }
+            searchProviders();
+            renderAppointments();
+        }
+        initializePage();
+    </script>
+    <!-- Duplicate handler removed: the main script above handles provider form submission via Supabase -->
+</body>
+
+</html>
