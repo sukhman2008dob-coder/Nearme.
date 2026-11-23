@@ -1255,16 +1255,65 @@ create policy "Allow admin read" on site_analytics
             showToast("Metrics updated!");
         }
 
+        const sampleDemoProviders = [
+            { name: "Rakesh Plumbing Solutions", service: "Plumber", area: "Sector 16 Chandigarh", phone: "98765 41201", price: "₹299", rating: 4.9, reviews: 142, sponsored: true },
+            { name: "Sharma Electrical Works", service: "Electrician", area: "Sector 55 Mohali", phone: "98140 88234", price: "₹349", rating: 4.8, reviews: 98, sponsored: true },
+            { name: "CoolCare AC Technicians", service: "AC Repair", area: "Sector 22 Chandigarh", phone: "98882 19045", price: "₹499", rating: 4.9, reviews: 215, sponsored: true },
+            { name: "SparkleHome Deep Cleaning", service: "Cleaner", area: "Kharar", phone: "97801 54312", price: "₹899", rating: 4.7, reviews: 76, sponsored: true },
+            { name: "Verma Woodcraft & Furniture", service: "Carpenter", area: "Sector 18 Chandigarh", phone: "98722 67019", price: "₹399", rating: 4.9, reviews: 64, sponsored: false },
+            { name: "Rainbow Professional Painters", service: "Painter", area: "Sector 19 Chandigarh", phone: "98155 34290", price: "₹499", rating: 4.8, reviews: 52, sponsored: false },
+            { name: "Apex Appliance Care", service: "Appliance Repair", area: "Sector 20 Chandigarh", phone: "98760 99421", price: "₹399", rating: 4.9, reviews: 110, sponsored: false },
+            { name: "SafeHome Pest Eradication", service: "Pest Control", area: "Sector 54 Mohali", phone: "98880 23145", price: "₹699", rating: 4.8, reviews: 43, sponsored: false },
+            { name: "CitySpeed Doorstep Mechanics", service: "Mechanic", area: "Kharar", phone: "98771 50289", price: "₹299", rating: 4.7, reviews: 88, sponsored: false },
+            { name: "Elite Salon & Beauty Doorstep", service: "Beauty & Salon", area: "Sector 16 Chandigarh", phone: "98788 12390", price: "₹599", rating: 4.9, reviews: 134, sponsored: false },
+            { name: "GreenThumb Landscaping & Gardening", service: "Gardener", area: "Sector 18 Chandigarh", phone: "98144 77610", price: "₹349", rating: 4.8, reviews: 38, sponsored: false },
+            { name: "BrightMinds Home Tutors", service: "Tutor", area: "Sector 22 Chandigarh", phone: "98762 33419", price: "₹499", rating: 5.0, reviews: 49, sponsored: false }
+        ];
+
         async function loadProviders() {
             try {
+                let localProviders = [];
+                let localOverrides = [];
+                let deletedNames = [];
+                try {
+                    localProviders = JSON.parse(localStorage.getItem("nearyou-providers") || "[]");
+                    localOverrides = JSON.parse(localStorage.getItem("nearyou-provider-overrides") || "[]");
+                    deletedNames = JSON.parse(localStorage.getItem("nearyou-provider-deleted") || "[]");
+                    if (!Array.isArray(localProviders)) localProviders = [];
+                    if (!Array.isArray(localOverrides)) localOverrides = [];
+                    if (!Array.isArray(deletedNames)) deletedNames = [];
+                } catch (e) {}
+
                 if (sb) {
                     const { data, error } = await sb.from("providers").select("*").order("created_at", { ascending: false });
-                    if (!error && data) {
-                        allProviders = data;
+                    if (!error && data && data.length > 0) {
+                        const remoteNames = new Set(data.map(p => p.name));
+                        const allKnownNames = new Set([...remoteNames, ...sampleDemoProviders.map(p => p.name)]);
+                        allProviders = [...data,
+                            ...sampleDemoProviders.filter(sp => !remoteNames.has(sp.name)),
+                            ...localProviders.filter(p => !allKnownNames.has(p.name))];
+                    } else {
+                        const remoteNames = new Set();
+                        const allKnownNames = new Set(sampleDemoProviders.map(p => p.name));
+                        allProviders = [...sampleDemoProviders,
+                            ...localProviders.filter(p => !allKnownNames.has(p.name))];
                     }
+                } else {
+                    const allKnownNames = new Set(sampleDemoProviders.map(p => p.name));
+                    allProviders = [...sampleDemoProviders,
+                        ...localProviders.filter(p => !allKnownNames.has(p.name))];
                 }
+
+                const overrideMap = new Map(localOverrides.map(function (item) { return [item.name, item]; }));
+                const deletedSet = new Set(deletedNames);
+                allProviders = allProviders
+                    .filter(function (provider) { return !deletedSet.has(provider.name); })
+                    .map(function (provider) {
+                        const override = overrideMap.get(provider.name);
+                        return override ? { ...provider, ...override } : provider;
+                    });
             } catch (e) {
-                console.warn("Could not fetch remote providers:", e);
+                allProviders = [...sampleDemoProviders];
             }
             document.getElementById("badgeProviders").textContent = allProviders.length;
         }
@@ -1602,6 +1651,14 @@ create policy "Allow admin read" on site_analytics
             if (sb && item.id) {
                 await sb.from("providers").update({ sponsored: item.sponsored }).eq("id", item.id);
             }
+            let overrides = [];
+            try {
+                overrides = JSON.parse(localStorage.getItem("nearyou-provider-overrides") || "[]");
+                if (!Array.isArray(overrides)) overrides = [];
+            } catch (e) {}
+            overrides = overrides.filter(function (provider) { return provider.name !== item.name; });
+            overrides.push({ name: item.name, sponsored: item.sponsored });
+            localStorage.setItem("nearyou-provider-overrides", JSON.stringify(overrides));
             showToast(`Provider featured spot ${item.sponsored ? 'enabled' : 'disabled'}`);
             renderProvidersTable();
             renderOverview();
@@ -1609,10 +1666,20 @@ create policy "Allow admin read" on site_analytics
 
         async function deleteProvider(identifier) {
             if (!confirm("Are you sure you want to remove this provider listing?")) return;
+            const item = allProviders.find(p => p.id === identifier || p.name === identifier);
             allProviders = allProviders.filter(p => (p.id !== identifier && p.name !== identifier));
 
-            if (sb && identifier) {
+            if (sb && item && item.id) {
                 await sb.from("providers").delete().eq("id", identifier);
+            }
+            if (item) {
+                let deletedNames = [];
+                try {
+                    deletedNames = JSON.parse(localStorage.getItem("nearyou-provider-deleted") || "[]");
+                    if (!Array.isArray(deletedNames)) deletedNames = [];
+                } catch (e) {}
+                if (!deletedNames.includes(item.name)) deletedNames.push(item.name);
+                localStorage.setItem("nearyou-provider-deleted", JSON.stringify(deletedNames));
             }
             showToast("Provider removed.");
             document.getElementById("badgeProviders").textContent = allProviders.length;

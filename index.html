@@ -180,15 +180,33 @@
         .location-btn {
             border: 0;
             border-radius: 6px;
-            padding: 5px 7px;
+            padding: 6px 10px;
             background: #edf5ed;
             color: #286b45;
             font-size: 11px;
+            font-weight: 700;
             white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .location-btn:hover {
             background: #dceedd;
+        }
+
+        .location-btn.active {
+            background: #24714a;
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(36, 113, 74, 0.3);
+        }
+
+        .location-btn.loading {
+            background: #fef3c7;
+            color: #b45309;
+            cursor: wait;
         }
 
         .location-status {
@@ -1206,6 +1224,464 @@
                 flex-direction: column;
             }
         }
+
+        /* ── Provider Profile & Booking View (Minimalist Studio Style) ── */
+        .provider-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            place-items: center;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .provider-modal-overlay.open {
+            display: grid;
+        }
+
+        .provider-dashboard-card {
+            width: min(860px, 100%);
+            max-height: 88vh;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            animation: pdFadeIn 0.2s ease-out;
+        }
+
+        @keyframes pdFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 24px;
+            border-bottom: 1px solid #f1f5f9;
+            position: sticky;
+            top: 0;
+            background: #ffffff;
+            z-index: 20;
+        }
+
+        .back-link-btn {
+            background: none;
+            border: none;
+            color: #475569;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0;
+        }
+
+        .back-link-btn:hover {
+            color: #0f172a;
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pd-badge-sponsored {
+            background: #f8fafc;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 4px;
+        }
+
+        .modal-close-x {
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .modal-close-x:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+            border-color: #cbd5e1;
+        }
+
+        .provider-dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.35fr 1fr;
+            gap: 32px;
+            padding: 24px 28px 36px;
+        }
+
+        @media (max-width: 800px) {
+            .provider-dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                padding: 20px;
+            }
+        }
+
+        .pd-profile-section {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .pd-hero-header {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .pd-title-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .pd-title-row h2 {
+            font-size: 21px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+            letter-spacing: -0.3px;
+        }
+
+        .pd-verified-badge {
+            font-size: 11px;
+            font-weight: 600;
+            color: #475569;
+            background: #f1f5f9;
+            padding: 2px 7px;
+            border-radius: 4px;
+        }
+
+        .pd-meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .pd-service-tag {
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        .pd-rating {
+            color: #334155;
+            font-weight: 600;
+        }
+
+        .pd-distance {
+            color: #64748b;
+        }
+
+        .pd-contact-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 2px;
+        }
+
+        .pd-contact-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+
+        .pd-contact-btn.pd-call {
+            background: #0f172a;
+            color: #ffffff;
+            border: 1px solid #0f172a;
+        }
+
+        .pd-contact-btn.pd-call:hover {
+            background: #1e293b;
+        }
+
+        .pd-contact-btn.pd-whatsapp {
+            background: #ffffff;
+            color: #0f172a;
+            border: 1px solid #d1d5db;
+        }
+
+        .pd-contact-btn.pd-whatsapp:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        .pd-highlight-pill {
+            font-size: 12px;
+            color: #64748b;
+            margin-left: auto;
+        }
+
+        .pd-section-block {
+            border-top: 1px solid #f1f5f9;
+            padding-top: 18px;
+        }
+
+        .pd-section-block h3 {
+            font-size: 12px;
+            font-weight: 600;
+            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .pd-bio-text {
+            color: #475569;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .pd-features-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .pd-feature-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #334155;
+            font-weight: 500;
+        }
+
+        .pd-feature-item span {
+            color: #24714a;
+            font-weight: 800;
+        }
+
+        .pd-info-cards-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .pd-info-mini-card {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .pd-info-mini-card strong {
+            font-size: 11px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .pd-info-mini-card p {
+            margin: 0;
+            font-size: 13px;
+            color: #1e293b;
+            font-weight: 500;
+        }
+
+        .pd-reviews-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .pd-reviews-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .pd-review-card {
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 12px;
+        }
+
+        .pd-review-card:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .pd-review-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 4px;
+        }
+
+        .pd-review-stars {
+            color: #334155;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .pd-review-date {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .pd-review-text {
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .pd-booking-card {
+            background: #fafafa;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 22px;
+            position: sticky;
+            top: 70px;
+        }
+
+        .pd-booking-header h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 4px;
+        }
+
+        .pd-booking-header p {
+            font-size: 12px;
+            color: #64748b;
+            margin: 0 0 16px;
+        }
+
+        .pd-price-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 14px;
+        }
+
+        .pd-price-label {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .pd-price-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .pd-booking-card label {
+            display: block;
+            margin: 12px 0 5px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pd-booking-card input,
+        .pd-booking-card select,
+        .pd-booking-card textarea {
+            width: 100%;
+            padding: 9px 11px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            background: #ffffff;
+            color: #0f172a;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        .pd-booking-card input:focus,
+        .pd-booking-card select:focus,
+        .pd-booking-card textarea:focus {
+            border-color: #0f172a;
+            box-shadow: 0 0 0 1px #0f172a;
+        }
+
+        .pd-booking-summary {
+            padding: 10px 0;
+            margin: 12px 0 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 12px;
+            border-top: 1px solid #e5e7eb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .pd-summary-row {
+            display: flex;
+            justify-content: space-between;
+            color: #475569;
+        }
+
+        .pd-submit-booking-btn {
+            width: 100%;
+            padding: 11px;
+            background: #0f172a;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .pd-submit-booking-btn:hover {
+            background: #1e293b;
+        }
+
+        .pd-booking-status {
+            display: block;
+            margin-top: 10px;
+            font-size: 12px;
+            text-align: center;
+            font-weight: 600;
+            color: #0f172a;
+            min-height: 16px;
+        }
     </style>
 </head>
 
@@ -1257,18 +1733,10 @@
                             </select>
                         </label>
                         <label>YOUR LOCATION
-                            <span class="location-input"><input id="area-search" type="text" list="area-options"
-                                    placeholder="Enter your area"><datalist id="area-options">
-                                    <option value="Kharar">
-                                    <option value="Sector 55 Mohali">
-                                    <option value="Sector 54 Mohali">
-                                    <option value="Sector 16 Chandigarh">
-                                    <option value="Sector 18 Chandigarh">
-                                    <option value="Sector 19 Chandigarh">
-                                    <option value="Sector 20 Chandigarh">
-                                    <option value="Sector 22 Chandigarh">
-                                </datalist><button class="location-btn" type="button" onclick="useMyLocation()"
-                                    title="Find services near your current location">◎ Near me</button></span>
+                            <span class="location-input">
+                                <input id="area-search" type="text" placeholder="Enter your neighbourhood or click Near me" autocomplete="off">
+                                <button class="location-btn" type="button" onclick="useMyLocation()" title="Detect and use your current GPS location">📍 Near me</button>
+                            </span>
                         </label>
                         <button class="primary-btn" onclick="searchProviders()">Find a pro&nbsp; →</button>
                     </div>
@@ -1368,17 +1836,13 @@
                     </select>
                 </label>
                 <label>Your service area
-                    <select id="new-area" required>
-                        <option value="">Choose a neighbourhood</option>
-                        <option>Kharar</option>
-                        <option>Sector 55 Mohali</option>
-                        <option>Sector 54 Mohali</option>
-                        <option>Sector 16 Chandigarh</option>
-                        <option>Sector 18 Chandigarh</option>
-                        <option>Sector 19 Chandigarh</option>
-                        <option>Sector 20 Chandigarh</option>
-                        <option>Sector 22 Chandigarh</option>
-                    </select>
+                    <span class="location-input" style="margin-top: 7px;">
+                        <input id="new-area" type="text" placeholder="e.g. Sector 16, Kharar, or click Detect" required maxlength="80" autocomplete="off" style="margin-top: 0;">
+                        <button class="location-btn" type="button" id="providerLocationBtn" onclick="useProviderLocation()" title="Detect and use current location">📍 Detect</button>
+                    </span>
+                    <input type="hidden" id="new-lat" value="">
+                    <input type="hidden" id="new-lng" value="">
+                    <span id="provider-location-status" style="font-size: 11px; color: #477653; margin-top: 4px; display: block; min-height: 14px;"></span>
                 </label>
                 <label>Phone number
                     <input id="new-phone" type="tel" placeholder="e.g. 98765 43210" required maxlength="20">
@@ -1404,19 +1868,131 @@
         </div>
     </footer>
 
-    <dialog id="booking-dialog">
-        <form id="booking-form" onsubmit="confirmBooking(event)">
-            <h2>Request an appointment</h2>
-            <p id="booking-provider">Choose a convenient time and leave your phone number.</p>
-            <label for="booking-date">Preferred date</label>
-            <input id="booking-date" type="date" required>
-            <label for="booking-phone">Your phone number</label>
-            <input id="booking-phone" type="tel" placeholder="e.g. 98765 43210" required>
-            <div class="dialog-actions"><button class="secondary-btn" type="button"
-                    onclick="closeBookingDialog()">Cancel</button><button class="primary-btn" type="submit">Confirm
-                    appointment</button></div>
-        </form>
-    </dialog>
+    <!-- Provider Profile & Booking View (Minimalist Studio Style) -->
+    <div id="provider-modal" class="provider-modal-overlay" onclick="if(event.target===this)closeProviderModal()">
+        <div class="provider-dashboard-card" role="dialog" aria-modal="true">
+            <!-- Top Toolbar -->
+            <div class="modal-top-bar">
+                <button type="button" class="back-link-btn" onclick="closeProviderModal()">← Back</button>
+                <div class="top-bar-right">
+                    <span id="pd-sponsored-badge" class="pd-badge-sponsored" style="display:none;">Featured</span>
+                    <button type="button" class="modal-close-x" onclick="closeProviderModal()" aria-label="Close">✕</button>
+                </div>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="provider-dashboard-grid">
+                <!-- Left: Provider Profile Details -->
+                <div class="pd-profile-section">
+                    <div class="pd-hero-header">
+                        <div class="pd-title-row">
+                            <h2 id="pd-name">Provider Name</h2>
+                            <span class="pd-verified-badge" id="pd-verified">Verified</span>
+                        </div>
+                        <div class="pd-meta-row">
+                            <span class="pd-service-tag" id="pd-service">Service</span>
+                            <span>·</span>
+                            <span class="pd-distance" id="pd-distance">Area</span>
+                            <span>·</span>
+                            <span class="pd-rating" id="pd-rating">4.9 ★</span>
+                        </div>
+                    </div>
+
+                    <!-- Direct Contact -->
+                    <div class="pd-contact-bar">
+                        <a id="pd-call-btn" href="tel:" class="pd-contact-btn pd-call">
+                            <span id="pd-call-text">Call</span>
+                        </a>
+                        <a id="pd-wa-btn" href="#" target="_blank" rel="noopener noreferrer" class="pd-contact-btn pd-whatsapp">
+                            <span>WhatsApp</span>
+                        </a>
+                        <span class="pd-highlight-pill">Replies in ~15 mins</span>
+                    </div>
+
+                    <!-- About -->
+                    <div class="pd-section-block">
+                        <h3>About</h3>
+                        <p id="pd-bio" class="pd-bio-text"></p>
+                    </div>
+
+                    <!-- Services & Specialties -->
+                    <div class="pd-section-block">
+                        <h3>Services &amp; Specialties</h3>
+                        <div class="pd-features-grid" id="pd-features"></div>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="pd-section-block pd-info-cards-row">
+                        <div class="pd-info-mini-card">
+                            <strong>Working Hours</strong>
+                            <p>8:00 AM – 8:00 PM</p>
+                        </div>
+                        <div class="pd-info-mini-card">
+                            <strong>Service Area</strong>
+                            <p id="pd-coverage">Area &amp; surrounding sectors</p>
+                        </div>
+                    </div>
+
+                    <!-- Reviews -->
+                    <div class="pd-section-block">
+                        <div class="pd-reviews-header">
+                            <h3>Reviews</h3>
+                            <span id="pd-reviews-count"></span>
+                        </div>
+                        <div id="pd-reviews-list" class="pd-reviews-list"></div>
+                    </div>
+                </div>
+
+                <!-- Right: Booking Widget -->
+                <div class="pd-booking-section">
+                    <div class="pd-booking-card">
+                        <div class="pd-booking-header">
+                            <h3>Schedule an Appointment</h3>
+                            <p>No advance payment · Pay after work is done</p>
+                        </div>
+                        <div class="pd-price-banner">
+                            <span class="pd-price-label">Visit Rate</span>
+                            <span class="pd-price-value" id="pd-price">₹299</span>
+                        </div>
+
+                        <form id="pd-booking-form" onsubmit="confirmProviderDashboardBooking(event)">
+                            <label for="pd-booking-date">Date</label>
+                            <input id="pd-booking-date" type="date" required>
+
+                            <label for="pd-booking-time">Time Window</label>
+                            <select id="pd-booking-time" required>
+                                <option value="Morning (9:00 AM – 12:00 PM)">Morning (9:00 AM – 12:00 PM)</option>
+                                <option value="Afternoon (12:00 PM – 4:00 PM)" selected>Afternoon (12:00 PM – 4:00 PM)</option>
+                                <option value="Evening (4:00 PM – 8:00 PM)">Evening (4:00 PM – 8:00 PM)</option>
+                            </select>
+
+                            <label for="pd-booking-phone">Your Phone Number</label>
+                            <input id="pd-booking-phone" type="tel" placeholder="e.g. 98765 43210" required maxlength="15">
+
+                            <label for="pd-booking-notes">Task Details (Optional)</label>
+                            <textarea id="pd-booking-notes" placeholder="Describe what you need help with..." rows="2"></textarea>
+
+                            <div class="pd-booking-summary">
+                                <div class="pd-summary-row">
+                                    <span>Inspection / Visit</span>
+                                    <span id="pd-summary-price">₹299</span>
+                                </div>
+                                <div class="pd-summary-row">
+                                    <span>Advance Deposit</span>
+                                    <span style="font-weight: 600; color: #0f172a;">₹0 (Pay after completion)</span>
+                                </div>
+                            </div>
+
+                            <button type="submit" id="pd-submit-btn" class="pd-submit-booking-btn">
+                                Confirm Appointment
+                            </button>
+                            <span id="pd-booking-status" class="pd-booking-status"></span>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Auth Modal -->
     <div id="auth-overlay" class="auth-overlay" onclick="if(event.target===this)closeAuth()">
@@ -1595,11 +2171,127 @@
             }
         }
 
+        function saveOAuthDraft() {
+            const draft = {
+                scrollY: window.scrollY,
+                hash: window.location.hash,
+                selectedProvider: typeof selectedProvider === "string" ? selectedProvider : "",
+                providerModalOpen: document.getElementById("provider-modal")
+                    ? document.getElementById("provider-modal").classList.contains("open")
+                    : false,
+                selectedCategory: typeof selectedCategory === "string" ? selectedCategory : "all",
+                areaSearch: document.getElementById("area-search") ? document.getElementById("area-search").value : "",
+                serviceSearch: document.getElementById("service-search") ? document.getElementById("service-search").value : "all",
+                providerForm: {},
+                bookingForm: {}
+            };
+
+            ["provider-form", "pd-booking-form"].forEach(function (formId) {
+                const form = document.getElementById(formId);
+                if (!form) return;
+                const values = {};
+                Array.from(form.elements).forEach(function (control) {
+                    if (!control.name && !control.id) return;
+                    const key = control.name || control.id;
+                    if (control.type === "checkbox" || control.type === "radio") {
+                        values[key] = control.checked;
+                    } else if (control.type !== "password") {
+                        values[key] = control.value;
+                    }
+                });
+                draft[formId === "provider-form" ? "providerForm" : "bookingForm"] = values;
+            });
+
+            try {
+                sessionStorage.setItem("nearme_oauth_draft", JSON.stringify(draft));
+            } catch (error) {
+                console.log("OAuth draft could not be saved.");
+            }
+        }
+
+        function restoreOAuthDraft() {
+            let draft;
+            try {
+                draft = JSON.parse(sessionStorage.getItem("nearme_oauth_draft") || "null");
+            } catch (error) {
+                draft = null;
+            }
+            if (!draft) return;
+
+            try {
+                if (typeof selectedCategory !== "undefined" && draft.selectedCategory) {
+                    selectedCategory = draft.selectedCategory;
+                }
+                if (document.getElementById("area-search") && draft.areaSearch !== undefined) {
+                    document.getElementById("area-search").value = draft.areaSearch;
+                }
+                if (document.getElementById("service-search") && draft.serviceSearch) {
+                    document.getElementById("service-search").value = draft.serviceSearch;
+                }
+
+                [["provider-form", draft.providerForm]].forEach(function (entry) {
+                    const form = document.getElementById(entry[0]);
+                    const values = entry[1] || {};
+                    if (!form) return;
+                    Array.from(form.elements).forEach(function (control) {
+                        if (!control.name && !control.id) return;
+                        const key = control.name || control.id;
+                        if (!(key in values)) return;
+                        if (control.type === "checkbox" || control.type === "radio") {
+                            control.checked = Boolean(values[key]);
+                        } else {
+                            control.value = values[key];
+                        }
+                    });
+                });
+
+                if (draft.selectedProvider) {
+                    selectedProvider = draft.selectedProvider;
+                    if (draft.providerModalOpen) {
+                        openProviderDashboard(draft.selectedProvider);
+                    }
+                }
+
+                const bookingForm = document.getElementById("pd-booking-form");
+                const bookingValues = draft.bookingForm || {};
+                if (bookingForm) {
+                    Array.from(bookingForm.elements).forEach(function (control) {
+                        if (!control.name && !control.id) return;
+                        const key = control.name || control.id;
+                        if (!(key in bookingValues)) return;
+                        if (control.type === "checkbox" || control.type === "radio") {
+                            control.checked = Boolean(bookingValues[key]);
+                        } else {
+                            control.value = bookingValues[key];
+                        }
+                    });
+                }
+
+                const categoryNames = ["all", "Plumber", "Electrician", "Cleaner", "Carpenter", "Painter", "AC Repair", "Appliance Repair", "Pest Control", "Mechanic", "Tutor", "Gardener", "Beauty & Salon"];
+                document.querySelectorAll(".category").forEach(function (button, index) {
+                    button.classList.toggle("active", categoryNames[index] === draft.selectedCategory);
+                });
+
+                searchProviders();
+                if (draft.hash) {
+                    window.history.replaceState(null, "", draft.hash ? window.location.pathname + window.location.search + draft.hash : window.location.href);
+                }
+                setTimeout(function () {
+                    window.scrollTo(0, draft.scrollY || 0);
+                }, 100);
+            } finally {
+                sessionStorage.removeItem("nearme_oauth_draft");
+            }
+        }
+
         async function loginWithOAuth(provider) {
             if (!sb) { showAuthMsg("Supabase is not configured.", false); return; }
             showAuthMsg("", false);
             try {
-                const redirectTarget = window.location.origin ? (window.location.origin + window.location.pathname) : window.location.href;
+                saveOAuthDraft();
+                const redirectTarget = window.location.origin
+                    ? (window.location.origin + window.location.pathname + window.location.search + window.location.hash)
+                    : window.location.href;
                 const { error } = await sb.auth.signInWithOAuth({
                     provider: provider,
                     options: {
@@ -1680,7 +2372,265 @@
             "Sector 22 Chandigarh": { lat: 30.7303, lng: 76.7734 }
         };
 
-        let providers = [];
+        // 12 Rich Demo Provider Profiles
+        const sampleProviders = [
+            {
+                name: "Rakesh Plumbing Solutions",
+                service: "Plumber",
+                area: "Sector 16 Chandigarh",
+                phone: "98765 41201",
+                lat: 30.7474,
+                lng: 76.7752,
+                rating: 4.9,
+                reviews: 142,
+                price: "₹299",
+                icon: "🔧",
+                sponsored: true,
+                bio: "Over 9 years of dedicated plumbing expertise across Chandigarh & Mohali. Specialist in bathroom leak repair, overhead water tank installation, tap replacements, and low water pressure issues.",
+                skills: ["Emergency leak detection", "Bathroom sanitary fittings", "Geyser connection & valve repair", "Drainage unclogging & jetting"],
+                reviewsData: [
+                    { name: "Amanpreet S.", rating: 5, date: "2026-11-16", review: "Rakesh arrived within 25 minutes and solved a persistent pipeline leakage under our sink. Extremely clean work and transparent pricing." },
+                    { name: "Vikas Mehra", rating: 5, date: "2026-11-10", review: "Installed our new bathroom mixer and geyser valves smoothly. Highly recommended for any plumbing work." }
+                ]
+            },
+            {
+                name: "Sharma Electrical Works",
+                service: "Electrician",
+                area: "Sector 55 Mohali",
+                phone: "98140 88234",
+                lat: 30.7285,
+                lng: 76.7198,
+                rating: 4.8,
+                reviews: 98,
+                price: "₹349",
+                icon: "⚡",
+                sponsored: true,
+                bio: "Certified senior electrician providing complete home electrical solutions, MCB tripping diagnoses, inverter setups, and elegant LED lighting installations.",
+                skills: ["Short-circuit & MCB diagnosis", "Inverter wiring & battery maintenance", "Ceiling fan & chandelier fitting", "Complete house rewiring"],
+                reviewsData: [
+                    { name: "Harinder Singh", rating: 5, date: "2026-11-17", review: "Our main MCB kept tripping. Sharma ji diagnosed the loose neutral wire in 10 minutes. Very knowledgeable!" },
+                    { name: "Pooja Sharma", rating: 4, date: "2026-11-08", review: "Installed 4 decorative ceiling lights and fixed the kitchen switchboard. Neatly done." }
+                ]
+            },
+            {
+                name: "CoolCare AC Technicians",
+                service: "AC Repair",
+                area: "Sector 22 Chandigarh",
+                phone: "98882 19045",
+                lat: 30.7303,
+                lng: 76.7734,
+                rating: 4.9,
+                reviews: 215,
+                price: "₹499",
+                icon: "❄️",
+                sponsored: true,
+                bio: "Specialized doorstep split & window AC repair technicians. Offering high-pressure foam jet wash, R32/R410A gas charging, cooling troubleshooting, and seasonal maintenance.",
+                skills: ["Deep foam jet service", "Refrigerant gas leak fixing", "PCB circuit board repair", "Compressor & capacitor replacement"],
+                reviewsData: [
+                    { name: "Rohit Bansal", rating: 5, date: "2026-11-15", review: "The AC was barely cooling. They cleaned the indoor blower and topped up the gas. Cooling like brand new now." },
+                    { name: "Simran Kaur", rating: 5, date: "2026-11-04", review: "Prompt service and brought their own pressure pump. No mess left behind." }
+                ]
+            },
+            {
+                name: "SparkleHome Deep Cleaning",
+                service: "Cleaner",
+                area: "Kharar",
+                phone: "97801 54312",
+                lat: 30.7463,
+                lng: 76.6469,
+                rating: 4.7,
+                reviews: 76,
+                price: "₹899",
+                icon: "🧹",
+                sponsored: true,
+                bio: "Professional residential cleaning team using hospital-grade disinfectants and single-disc scrubbers for full home, kitchen degreasing, and sofa shampooing.",
+                skills: ["Full apartment deep cleaning", "Kitchen chimney & tile degreasing", "Bathroom scaling & acid-free wash", "Fabric sofa & carpet shampooing"],
+                reviewsData: [
+                    { name: "Neha Walia", rating: 5, date: "2026-11-14", review: "Booked them for deep cleaning. Kitchen and washrooms look spotless. Team of 3 was polite and hardworking." }
+                ]
+            },
+            {
+                name: "Verma Woodcraft & Furniture",
+                service: "Carpenter",
+                area: "Sector 18 Chandigarh",
+                phone: "98722 67019",
+                lat: 30.7394,
+                lng: 76.7908,
+                rating: 4.9,
+                reviews: 64,
+                price: "₹399",
+                icon: "🪚",
+                sponsored: false,
+                bio: "Master carpenter specialized in modular kitchen repairs, wooden door lock installations, sliding wardrobe alignments, and custom bed fabrication.",
+                skills: ["Godrej door lock fitting", "Modular kitchen hinge replacement", "Wardrobe slider realignment", "Furniture dismantling & assembly"],
+                reviewsData: [
+                    { name: "Rajiv Gupta", rating: 5, date: "2026-11-12", review: "Fixed our sagging modular wardrobe doors and installed new hydraulic hinges. Flawless work." }
+                ]
+            },
+            {
+                name: "Rainbow Professional Painters",
+                service: "Painter",
+                area: "Sector 19 Chandigarh",
+                phone: "98155 34290",
+                lat: 30.7416,
+                lng: 76.8000,
+                rating: 4.8,
+                reviews: 52,
+                price: "₹499",
+                icon: "🎨",
+                sponsored: false,
+                bio: "Experienced painting crew providing Asian Paints / Dulux interior emulsion, exterior weather coats, damp wall waterproofing treatments, and aesthetic texture work.",
+                skills: ["Interior luxury emulsion", "Dampness & seepage treatment", "Wood polish & PU coating", "Wall stencil & accent painting"],
+                reviewsData: [
+                    { name: "Karan Dhillon", rating: 5, date: "2026-11-09", review: "Painted our living room accent wall with metallic texture. The finish is stunning." }
+                ]
+            },
+            {
+                name: "Apex Appliance Care",
+                service: "Appliance Repair",
+                area: "Sector 20 Chandigarh",
+                phone: "98760 99421",
+                lat: 30.7213,
+                lng: 76.7813,
+                rating: 4.9,
+                reviews: 110,
+                price: "₹399",
+                icon: "🧰",
+                sponsored: false,
+                bio: "Multi-brand doorstep repair technicians for front/top load washing machines, double-door refrigerators, microwave ovens, and RO water purifiers.",
+                skills: ["Washing machine drum & motor", "Fridge cooling & thermostat", "RO membrane & filter renewal", "Microwave magnetron fix"],
+                reviewsData: [
+                    { name: "Gurpreet Kaur", rating: 5, date: "2026-11-13", review: "Washing machine had a loud spinning noise. Replaced the bearing on the spot with genuine parts." }
+                ]
+            },
+            {
+                name: "SafeHome Pest Eradication",
+                service: "Pest Control",
+                area: "Sector 54 Mohali",
+                phone: "98880 23145",
+                lat: 30.7250,
+                lng: 76.7233,
+                rating: 4.8,
+                reviews: 43,
+                price: "₹699",
+                icon: "🐜",
+                sponsored: false,
+                bio: "Certified pest exterminators using Bayer child-safe, odorless gel treatments for cockroaches, termites, bed bugs, and general rodent control.",
+                skills: ["Odorless cockroach gel baiting", "Drill-fill termite protection", "Anti-bed bug steam treatment", "Mosquito fogging & larvicide"],
+                reviewsData: [
+                    { name: "Deepak Saini", rating: 5, date: "2026-11-11", review: "Completely rid our modular kitchen of cockroaches within a week. No smell at all." }
+                ]
+            },
+            {
+                name: "CitySpeed Doorstep Mechanics",
+                service: "Mechanic",
+                area: "Kharar",
+                phone: "98771 50289",
+                lat: 30.7463,
+                lng: 76.6469,
+                rating: 4.7,
+                reviews: 88,
+                price: "₹299",
+                icon: "🚗",
+                sponsored: false,
+                bio: "On-demand roadside and doorstep mechanic for car battery jump-starts, flat tyre puncture repair, oil changes, brake inspections, and minor diagnostics.",
+                skills: ["Car battery jump start", "Tubeless puncture repair", "Engine oil & filter service", "Brake pad replacement"],
+                reviewsData: [
+                    { name: "Manish Joshi", rating: 5, date: "2026-11-06", review: "Car wouldn't crank in the morning. Arrived with jump cables in 15 mins. Saved my day!" }
+                ]
+            },
+            {
+                name: "Elite Salon & Beauty Doorstep",
+                service: "Beauty & Salon",
+                area: "Sector 16 Chandigarh",
+                phone: "98788 12390",
+                lat: 30.7474,
+                lng: 76.7752,
+                rating: 4.9,
+                reviews: 134,
+                price: "₹599",
+                icon: "💇",
+                sponsored: false,
+                bio: "Trained aesthetician and beauty specialist bringing salon-grade facials, waxing, manicure, pedicure, and hair treatments with sanitized single-use kits.",
+                skills: ["O3+ & Hydra facial treatments", "Rica wax & gentle hair removal", "Deluxe spa pedicure & manicure", "Hair spa & deep conditioning"],
+                reviewsData: [
+                    { name: "Mehak Chawla", rating: 5, date: "2026-11-16", review: "Loved the O3+ facial and manicure. Very hygienic and carried all sanitized disposables." }
+                ]
+            },
+            {
+                name: "GreenThumb Landscaping & Gardening",
+                service: "Gardener",
+                area: "Sector 18 Chandigarh",
+                phone: "98144 77610",
+                lat: 30.7394,
+                lng: 76.7908,
+                rating: 4.8,
+                reviews: 38,
+                price: "₹349",
+                icon: "🪴",
+                sponsored: false,
+                bio: "Passionate horticulturists providing lawn cutting, hedge trimming, seasonal flower pot repotting, organic fertilizer application, and plant disease treatments.",
+                skills: ["Lawn mowing & edging", "Rose & ornamental pruning", "Vermicompost enrichment", "Insect & fungus treatment"],
+                reviewsData: [
+                    { name: "Col. H.S. Brar", rating: 5, date: "2026-11-07", review: "Transformed our messy front lawn into a neat green carpet. Very knowledgeable about winter flowers." }
+                ]
+            },
+            {
+                name: "BrightMinds Home Tutors",
+                service: "Tutor",
+                area: "Sector 22 Chandigarh",
+                phone: "98762 33419",
+                lat: 30.7303,
+                lng: 76.7734,
+                rating: 5.0,
+                reviews: 49,
+                price: "₹499",
+                icon: "📚",
+                sponsored: false,
+                bio: "Qualified educators providing 1-on-1 home tutoring in Mathematics, Science, and English for CBSE & ICSE students (Classes 6 to 10) with concept-first methodology.",
+                skills: ["CBSE & ICSE syllabus coverage", "Maths conceptual drills", "Physics & Chemistry fundamentals", "Weekly test & progress report"],
+                reviewsData: [
+                    { name: "Ananya Roy", rating: 5, date: "2026-11-15", review: "My son scored 92% in his midterm Maths after just 2 months of tutoring. Extremely patient and clear teacher." }
+                ]
+            }
+        ];
+
+        // Merge sample providers with any user-listed providers saved in localStorage
+        let providers = [...sampleProviders];
+        try {
+            const savedUserProviders = JSON.parse(localStorage.getItem("nearyou-providers") || "[]");
+            if (Array.isArray(savedUserProviders) && savedUserProviders.length > 0) {
+                const sampleNames = new Set(sampleProviders.map(sp => sp.name));
+                const uniqueUserProviders = savedUserProviders.filter(p => !sampleNames.has(p.name));
+                providers = [...sampleProviders, ...uniqueUserProviders];
+            }
+        } catch (e) {
+            console.log("Could not restore user-listed providers from localStorage.");
+        }
+
+        function applyProviderLocalOverrides(providerList) {
+            let overrides = [];
+            let deleted = [];
+            try {
+                overrides = JSON.parse(localStorage.getItem("nearyou-provider-overrides") || "[]");
+                deleted = JSON.parse(localStorage.getItem("nearyou-provider-deleted") || "[]");
+                if (!Array.isArray(overrides)) overrides = [];
+                if (!Array.isArray(deleted)) deleted = [];
+            } catch (e) {}
+
+            const overrideMap = new Map(overrides.map(function (item) {
+                return [item.name, item];
+            }));
+            const deletedNames = new Set(deleted);
+            return providerList
+                .filter(function (provider) { return !deletedNames.has(provider.name); })
+                .map(function (provider) {
+                    const override = overrideMap.get(provider.name);
+                    return override ? { ...provider, ...override } : provider;
+                });
+        }
+
+        providers = applyProviderLocalOverrides(providers);
 
         // Bookings and reviews are stored in Supabase when configured.
         let appointments = [];
@@ -1693,7 +2643,17 @@
 
         let selectedCategory = "all";
         let selectedProvider = "";
+
+        // Restore user location from localStorage if previously detected
         let userLocation = null;
+        try {
+            const savedLoc = JSON.parse(localStorage.getItem("nearme-user-location") || "null");
+            if (savedLoc && savedLoc.lat && savedLoc.lng) {
+                userLocation = savedLoc;
+            }
+        } catch (e) {
+            console.log("Could not restore saved location.");
+        }
         let visibleCount = 24;
         let currentMatches = [];
 
@@ -1725,7 +2685,7 @@
               <div class="card-contact">${callNumber ? `<a href="tel:${callNumber}">☎ Call ${escapeHTML(provider.phone)}</a>` : "<span>Sample provider profile</span>"}</div>
               <div class="card-bottom">
                 <span class="price">From ${escapeHTML(provider.price)}<small>per visit</small></span>
-                <button class="book-btn" onclick="openBooking('${escapeHTML(provider.name)}')">Book a visit&nbsp; →</button>
+                <button class="book-btn" onclick="openProviderDashboard('${escapeHTML(provider.name)}')">View Profile &amp; Book&nbsp; →</button>
               </div>
             </div>
           </article>`;
@@ -1751,7 +2711,7 @@
               <h3>${escapeHTML(provider.name)}</h3>
               <p>${escapeHTML(provider.service)} service in ${escapeHTML(provider.area)}</p>
               <div class="ad-meta"><b>${provider.reviews === 0 ? "New listing" : "★ " + escapeHTML(provider.rating)}</b><span>From ${escapeHTML(provider.price)}</span></div>
-              <button class="ad-button" onclick="openBooking('${escapeHTML(provider.name)}')">Book this provider&nbsp; →</button>
+              <button class="ad-button" onclick="openProviderDashboard('${escapeHTML(provider.name)}')">View Profile &amp; Book&nbsp; →</button>
             </div>
           </article>`;
             });
@@ -1764,32 +2724,51 @@
             });
         }
 
-        // 3. Filter by chosen service and neighbourhood text.
+        // 3. Filter by chosen service, neighbourhood text, or live GPS proximity.
         function searchProviders() {
             const service = document.getElementById("service-search").value;
-            const area = document.getElementById("area-search").value.trim().toLowerCase();
+            const rawArea = document.getElementById("area-search").value.trim().toLowerCase();
+            const cleanArea = rawArea.replace(/^[📍\s]+/, "");
+
             let matches = providers.filter(function (provider) {
                 const rightService = service === "all" || provider.service === service;
-                const rightArea = userLocation ? distanceTo(userLocation, provider) <= 5 : area === "" || normalizeArea(provider.area).includes(normalizeArea(area));
                 const rightCategory = selectedCategory === "all" || provider.service === selectedCategory;
+
+                // When live GPS location is active and user hasn't typed an alternate text
+                if (userLocation && (rawArea === "" || rawArea.startsWith("📍"))) {
+                    return rightService && rightCategory;
+                }
+
+                const rightArea = cleanArea === "" || normalizeArea(provider.area).includes(normalizeArea(cleanArea));
                 return rightService && rightArea && rightCategory;
             });
+
+            // If user location is active, sort all matches by distance (closest first!)
+            if (userLocation) {
+                matches.sort(function (a, b) {
+                    return distanceTo(userLocation, a) - distanceTo(userLocation, b);
+                });
+            }
 
             currentMatches = matches;
             visibleCount = 24;
 
-            if (service !== "all" || area !== "") {
+            if (service !== "all" || rawArea !== "") {
                 clearTimeout(searchProviders.debounceTimer);
                 searchProviders.debounceTimer = setTimeout(function () {
                     if (window.NearmeTracker) {
-                        NearmeTracker.logEvent("search", { service: service, area: area, matches: matches.length });
+                        NearmeTracker.logEvent("search", { service: service, area: rawArea, matches: matches.length });
                     }
                 }, 700);
             }
 
-            document.getElementById("result-message").textContent = userLocation
-                ? "Found " + matches.length + " provider(s) within 5 km of your location."
-                : "Found " + matches.length + " local provider(s).";
+            if (userLocation && matches.length > 0) {
+                const closestKm = distanceTo(userLocation, matches[0]).toFixed(1);
+                document.getElementById("result-message").textContent = `Found ${matches.length} provider(s) sorted by proximity (closest is ${closestKm} km away).`;
+            } else {
+                document.getElementById("result-message").textContent = `Found ${matches.length} local provider(s).`;
+            }
+
             showProviders(matches);
         }
 
@@ -1799,23 +2778,83 @@
             showProviders(currentMatches);
         }
 
-        // Find providers within 5 km of the visitor, after they allow location access.
+        // Detect visitor's live GPS location, reverse-geocode place name, and find nearby services.
         function useMyLocation() {
             const status = document.getElementById("location-status");
+            const btn = document.querySelector(".location-btn");
+            const input = document.getElementById("area-search");
+
             if (!navigator.geolocation) {
-                status.textContent = "Your browser cannot share location. Enter your neighbourhood instead.";
+                status.textContent = "Your browser cannot share location. Please type your neighbourhood instead.";
                 return;
             }
 
-            status.textContent = "Finding your location… Please allow location access in your browser.";
-            navigator.geolocation.getCurrentPosition(function (position) {
-                userLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
-                document.getElementById("area-search").value = "";
-                status.textContent = "Location found. Showing sample providers within 5 km.";
+            // If already active, clicking again resets back to standard
+            if (userLocation && input.value.startsWith("📍")) {
+                userLocation = null;
+                localStorage.removeItem("nearme-user-location");
+                localStorage.removeItem("nearme-location-name");
+                input.value = "";
+                status.textContent = "";
+                if (btn) {
+                    btn.classList.remove("active", "loading");
+                    btn.innerHTML = "📍 Near me";
+                }
                 searchProviders();
-            }, function () {
-                status.textContent = "Could not access your location. Check browser permission or enter your neighbourhood.";
-            }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 });
+                return;
+            }
+
+            status.textContent = "📡 Detecting your location… Please allow browser permission.";
+            if (btn) {
+                btn.classList.add("loading");
+                btn.innerHTML = "⏳ Locating…";
+            }
+
+            navigator.geolocation.getCurrentPosition(async function (position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                userLocation = { lat: lat, lng: lng };
+                localStorage.setItem("nearme-user-location", JSON.stringify(userLocation));
+
+                let detectedName = "Your Location";
+                try {
+                    // Reverse geocoding via OpenStreetMap Nominatim
+                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`, {
+                        headers: { "Accept-Language": "en" }
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        const addr = data.address || {};
+                        const localArea = addr.suburb || addr.neighbourhood || addr.city_district || addr.residential || addr.city || addr.town || addr.village;
+                        const cityOrState = addr.city || addr.state_district || addr.state;
+                        detectedName = localArea ? (cityOrState && localArea !== cityOrState ? `${localArea}, ${cityOrState}` : localArea) : (cityOrState || "Your Location");
+                    }
+                } catch (err) {
+                    console.log("Reverse geocode fallback", err);
+                }
+
+                input.value = "📍 " + detectedName;
+                localStorage.setItem("nearme-location-name", detectedName);
+                status.textContent = `✓ Location detected (${detectedName}). Showing nearest services first.`;
+
+                if (btn) {
+                    btn.classList.remove("loading");
+                    btn.classList.add("active");
+                    btn.innerHTML = "✓ Near me";
+                }
+
+                searchProviders();
+            }, function (error) {
+                if (btn) {
+                    btn.classList.remove("loading", "active");
+                    btn.innerHTML = "📍 Near me";
+                }
+                if (error.code === error.PERMISSION_DENIED) {
+                    status.textContent = "Location access was denied. Please allow location in your browser address bar.";
+                } else {
+                    status.textContent = "Could not fetch location. Please check your GPS or connection.";
+                }
+            }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 });
         }
 
         // Calculate straight-line distance between two latitude/longitude points.
@@ -1846,36 +2885,178 @@
             searchProviders();
         }
 
-        // Typing an area switches from GPS search back to neighbourhood search.
+        // Typing a neighbourhood switches from GPS location back to text search.
         document.getElementById("area-search").addEventListener("input", function () {
-            userLocation = null;
-            document.getElementById("location-status").textContent = "";
+            if (!this.value.startsWith("📍")) {
+                userLocation = null;
+                localStorage.removeItem("nearme-user-location");
+                localStorage.removeItem("nearme-location-name");
+                document.getElementById("location-status").textContent = "";
+                const btn = document.querySelector(".location-btn");
+                if (btn) {
+                    btn.classList.remove("active", "loading");
+                    btn.innerHTML = "📍 Near me";
+                }
+            }
         });
 
-        // 5. Create a booking in Supabase.
-        function openBooking(name) {
-            if (!requireAuth("book a visit")) return;
+        // 5. Provider Dashboard & Profile Modal
+        function openProviderDashboard(name) {
+            const provider = providers.find(function (p) { return p.name === name; });
+            if (!provider) return;
             selectedProvider = name;
-            document.getElementById("booking-provider").textContent = "Request a visit from " + name + ".";
-            document.getElementById("booking-dialog").showModal();
+
+            if (window.NearmeTracker) {
+                NearmeTracker.logEvent("provider_viewed", { provider: provider.name, service: provider.service });
+            }
+
+            // Avatar & Name
+            document.getElementById("pd-avatar").textContent = provider.icon || "🔧";
+            document.getElementById("pd-name").textContent = provider.name;
+            document.getElementById("pd-service").textContent = provider.service + " Specialist";
+            document.getElementById("pd-verified").textContent = provider.reviews > 0 ? "✓ Verified Pro" : "★ Verified Partner";
+
+            // Rating
+            const isNew = provider.reviews === 0;
+            document.getElementById("pd-rating").textContent = isNew ? "★ New Listing" : `★ ${provider.rating} (${provider.reviews} reviews)`;
+
+            // Distance & Location
+            const dist = (userLocation && typeof distanceTo === "function") ? distanceTo(userLocation, provider).toFixed(1) + " km away · " : "";
+            document.getElementById("pd-distance").textContent = `📍 ${dist}${provider.area}`;
+            document.getElementById("pd-coverage").textContent = `${provider.area} & surrounding neighbourhoods`;
+
+            // Sponsored badge
+            const badge = document.getElementById("pd-sponsored-badge");
+            if (badge) badge.style.display = provider.sponsored ? "inline-block" : "none";
+
+            // Contact Phone & WhatsApp
+            const cleanPhone = String(provider.phone || "").replace(/\D/g, "");
+            const callBtn = document.getElementById("pd-call-btn");
+            const waBtn = document.getElementById("pd-wa-btn");
+            if (callBtn) {
+                callBtn.href = cleanPhone ? "tel:" + cleanPhone : "#";
+                document.getElementById("pd-call-text").textContent = cleanPhone ? `Call ${provider.phone}` : "Call";
+            }
+            if (waBtn) {
+                waBtn.href = cleanPhone ? `https://wa.me/91${cleanPhone}?text=Hi%20${encodeURIComponent(provider.name)},%20I%20found%20you%20on%20NearMe%20and%20would%20like%20to%20book%20a%20visit.` : "#";
+            }
+
+            // Price
+            const priceText = String(provider.price || "₹299");
+            document.getElementById("pd-price").textContent = priceText;
+            document.getElementById("pd-summary-price").textContent = priceText;
+
+            // Tailored Bio & Skills by trade
+            const tradeDescriptions = {
+                Plumber: "Professional plumber specializing in residential pipe repairs, leak detection, bathroom fixtures, drainage cleaning, and sanitary installations.",
+                Electrician: "Licensed electrician experienced in house wiring, circuit breaker (MCB) fixes, switchboards, lighting fixtures, inverters, and emergency troubleshooting.",
+                Cleaner: "Trained cleaning specialist providing comprehensive deep home cleaning, kitchen sanitation, sofa shampooing, bathroom descaling, and floor care.",
+                Carpenter: "Skilled carpenter offering custom woodwork, door/window frame repair, lock fitting, modular furniture assembly, and kitchen cabinet restoration.",
+                Painter: "Professional painter handling interior and exterior wall painting, waterproof primer coating, texture finishes, putty smoothing, and touch-ups.",
+                "AC Repair": "Certified HVAC technician specializing in AC cooling diagnosis, gas leak charging, deep jet cleaning, filter replacement, and maintenance.",
+                "Appliance Repair": "Experienced technician repairing refrigerators, washing machines, microwaves, water purifiers, and home appliances with genuine parts.",
+                "Pest Control": "Certified pest management expert for termite treatments, cockroach elimination, bed bug prevention, and child-safe odorless sprays.",
+                Mechanic: "Automotive technician offering doorstep vehicle inspections, battery jump-starts, brake checks, engine oil service, and minor mechanical fixes.",
+                Tutor: "Dedicated educator providing personalized academic coaching, conceptual clarity, exam preparation, and continuous progress monitoring.",
+                Gardener: "Experienced horticulturist for lawn mowing, garden pruning, weed removal, organic soil fertilizing, and seasonal plant maintenance.",
+                "Beauty & Salon": "Certified beauty professional offering doorstep salon treatments, hair styling, facials, waxing, and bridal care using sanitized equipment."
+            };
+            document.getElementById("pd-bio").textContent = provider.bio || tradeDescriptions[provider.service] || "Experienced local professional committed to delivering dependable, high-quality service tailored to your home requirements.";
+
+            // Dynamic trade features
+            const tradeSkills = {
+                Plumber: ["Pipe leak detection & repair", "Tap & shower mixer fitting", "Water tank & geyser installation", "Drainage & sewer unclogging"],
+                Electrician: ["Switchboard & socket repair", "Short-circuit & fuse diagnosis", "Ceiling fan & light fitting", "Inverter & stabilizer setup"],
+                Cleaner: ["Full home deep cleaning", "Bathroom tiles & lime descaling", "Kitchen degreasing & chimney", "Sofa & mattress shampooing"],
+                "AC Repair": ["Cooling efficiency check", "Refrigerant gas leak refill", "High-pressure jet service", "Compressor & PCB diagnosis"]
+            };
+            const skills = provider.skills || tradeSkills[provider.service] || ["Standard on-site inspection", "Genuine parts & materials guarantee", "30-day post-service warranty", "Pay after job is completed"];
+            const featuresContainer = document.getElementById("pd-features");
+            if (featuresContainer) {
+                featuresContainer.innerHTML = skills.map(function (s) {
+                    return `<div class="pd-feature-item"><span>✓</span> ${escapeHTML(s)}</div>`;
+                }).join("");
+            }
+
+            // Customer Reviews List (combine live appointments reviews + demo reviewsData)
+            const reviewsContainer = document.getElementById("pd-reviews-list");
+            const reviewsCountEl = document.getElementById("pd-reviews-count");
+            const matchedAppointments = appointments.filter(function (a) {
+                return a.provider === provider.name && a.rating > 0;
+            });
+            const allReviews = [...matchedAppointments, ...(provider.reviewsData || [])];
+
+            if (allReviews.length > 0) {
+                reviewsCountEl.textContent = `${allReviews.length} verified review(s)`;
+                reviewsContainer.innerHTML = allReviews.map(function (a) {
+                    const stars = a.rating ? "★".repeat(a.rating) + "☆".repeat(Math.max(0, 5 - a.rating)) : "★★★★★";
+                    return `
+                        <div class="pd-review-card">
+                            <div class="pd-review-top">
+                                <div>
+                                    <span class="pd-review-stars">${stars}</span>
+                                    <strong style="font-size: 11px; margin-left: 6px; color: #172b1e;">${escapeHTML(a.name || "Verified Customer")}</strong>
+                                </div>
+                                <span class="pd-review-date">${formatAppointmentDate(a.date || "2026-11-15")}</span>
+                            </div>
+                            <p class="pd-review-text">${escapeHTML(a.review || "Great work and punctual service.")}</p>
+                        </div>
+                    `;
+                }).join("");
+            } else {
+                reviewsCountEl.textContent = "Community Feedback";
+                reviewsContainer.innerHTML = `
+                    <div class="pd-review-card" style="text-align: center; color: #647569; padding: 18px;">
+                        <p style="margin: 0; font-size: 13px;">★ Verified NearMe partner with satisfaction guarantee.</p>
+                        <small style="color: #8b9b90; display: block; margin-top: 4px;">Be the first customer to book and submit a review!</small>
+                    </div>
+                `;
+            }
+
+            // Prepare Booking Form
+            const form = document.getElementById("pd-booking-form");
+            if (form) form.reset();
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const dateInput = document.getElementById("pd-booking-date");
+            if (dateInput) {
+                dateInput.value = tomorrow.toISOString().slice(0, 10);
+                dateInput.min = new Date().toISOString().slice(0, 10);
+            }
+            document.getElementById("pd-booking-status").textContent = "";
+
+            // Open Modal
+            document.getElementById("provider-modal").classList.add("open");
         }
 
-        function closeBookingDialog() {
-            document.getElementById("booking-dialog").close();
+        function closeProviderModal() {
+            document.getElementById("provider-modal").classList.remove("open");
         }
 
-        async function confirmBooking(event) {
+        // Handle Booking Submission from the Provider Dashboard
+        async function confirmProviderDashboardBooking(event) {
             event.preventDefault();
-            const form = document.getElementById("booking-form");
-            if (!form.reportValidity()) return;
+            if (!requireAuth("book an appointment")) return;
 
             const provider = providers.find(function (item) { return item.name === selectedProvider; });
+            const date = document.getElementById("pd-booking-date").value;
+            const phone = document.getElementById("pd-booking-phone").value.trim();
+            const timeWindow = document.getElementById("pd-booking-time").value;
+            const notes = document.getElementById("pd-booking-notes").value.trim();
+            const statusEl = document.getElementById("pd-booking-status");
+            const submitBtn = document.getElementById("pd-submit-btn");
+
+            if (!date || !phone) return;
+
+            submitBtn.disabled = true;
+            statusEl.textContent = "Confirming your booking…";
+
             const appointment = {
                 provider: selectedProvider,
                 service: provider ? provider.service : "Local service",
                 area: provider ? provider.area : "",
-                date: document.getElementById("booking-date").value,
-                phone: document.getElementById("booking-phone").value.trim(),
+                date: date,
+                phone: phone + (timeWindow ? ` (${timeWindow})` : "") + (notes ? ` · Note: ${notes}` : ""),
                 status: "upcoming",
                 rating: 0,
                 review: ""
@@ -1883,7 +3064,11 @@
 
             if (sb) {
                 const { data, error } = await sb.from("appointments").insert(appointment).select().single();
-                if (error) { alert("Could not save booking: " + error.message); return; }
+                if (error) {
+                    statusEl.textContent = "Could not save booking: " + error.message;
+                    submitBtn.disabled = false;
+                    return;
+                }
                 appointments.unshift(data);
             } else {
                 appointment.id = Date.now().toString() + Math.random().toString(36).slice(2, 7);
@@ -1891,10 +3076,31 @@
                 saveAppointments();
             }
 
-            form.reset();
-            closeBookingDialog();
+            if (window.NearmeTracker) {
+                NearmeTracker.logEvent("booking_confirmed", {
+                    provider: appointment.provider,
+                    service: appointment.service,
+                    area: appointment.area
+                });
+            }
+
+            statusEl.textContent = "🎉 Appointment successfully booked!";
             renderAppointments();
-            document.getElementById("my-appointments").scrollIntoView({ behavior: "smooth" });
+
+            setTimeout(function () {
+                submitBtn.disabled = false;
+                closeProviderModal();
+                const apptSection = document.getElementById("my-appointments");
+                if (apptSection) apptSection.scrollIntoView({ behavior: "smooth" });
+            }, 900);
+        }
+
+        // Backward compatibility
+        function openBooking(name) {
+            openProviderDashboard(name);
+        }
+        function closeBookingDialog() {
+            closeProviderModal();
         }
 
         function saveAppointments() {
@@ -1985,6 +3191,63 @@
             renderAppointments();
         }
 
+        // Detect provider's current location when listing a service
+        function useProviderLocation() {
+            const status = document.getElementById("provider-location-status");
+            const btn = document.getElementById("providerLocationBtn");
+            const areaInput = document.getElementById("new-area");
+            const latInput = document.getElementById("new-lat");
+            const lngInput = document.getElementById("new-lng");
+
+            if (!navigator.geolocation) {
+                status.textContent = "Your browser does not support location. Please enter your neighbourhood.";
+                return;
+            }
+
+            status.textContent = "📡 Detecting your business location…";
+            if (btn) {
+                btn.classList.add("loading");
+                btn.textContent = "⏳ Locating…";
+            }
+
+            navigator.geolocation.getCurrentPosition(async function (pos) {
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                latInput.value = lat;
+                lngInput.value = lng;
+
+                let name = "Local Area";
+                try {
+                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`, {
+                        headers: { "Accept-Language": "en" }
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        const addr = data.address || {};
+                        const local = addr.suburb || addr.neighbourhood || addr.city_district || addr.residential || addr.city || addr.town || addr.village;
+                        const mainCity = addr.city || addr.state_district || addr.state;
+                        name = local ? (mainCity && local !== mainCity ? `${local}, ${mainCity}` : local) : (mainCity || "Local Area");
+                    }
+                } catch (e) {
+                    console.log("Reverse geocode fallback", e);
+                }
+
+                areaInput.value = name;
+                status.textContent = `✓ Location saved: ${name}`;
+                if (btn) {
+                    btn.classList.remove("loading");
+                    btn.classList.add("active");
+                    btn.textContent = "✓ Located";
+                }
+            }, function (err) {
+                if (btn) {
+                    btn.classList.remove("loading", "active");
+                    btn.textContent = "📍 Detect";
+                }
+                status.textContent = "Could not fetch GPS. Please type your neighbourhood manually.";
+            }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 });
+        }
+
         // Add a provider to the shared directory.
         document.getElementById("provider-form").addEventListener("submit", async function (event) {
             event.preventDefault();
@@ -1994,7 +3257,7 @@
             const submitButton = form.querySelector('button[type="submit"]');
             if (!form.reportValidity()) return;
             const service = document.getElementById("new-service").value;
-            const area = document.getElementById("new-area").value;
+            const area = document.getElementById("new-area").value.trim();
             message.textContent = "Saving your listing…";
             submitButton.disabled = true;
             try {
@@ -2004,15 +3267,32 @@
                     "Pest Control": "🐜", Mechanic: "🚗", Tutor: "📚",
                     Gardener: "🪴", "Beauty & Salon": "💇"
                 };
-                const coordinates = areaCoordinates[area];
-                if (!coordinates) throw new Error("Please choose one of the listed neighbourhoods.");
+
+                // Resolve coordinates: check hidden GPS fields first, then areaCoordinates map, else regional centroid
+                let lat = parseFloat(document.getElementById("new-lat").value);
+                let lng = parseFloat(document.getElementById("new-lng").value);
+
+                if (isNaN(lat) || isNaN(lng)) {
+                    const matchedKey = Object.keys(areaCoordinates).find(k => 
+                        normalizeArea(k).includes(normalizeArea(area)) || normalizeArea(area).includes(normalizeArea(k))
+                    );
+                    if (matchedKey && areaCoordinates[matchedKey]) {
+                        lat = areaCoordinates[matchedKey].lat;
+                        lng = areaCoordinates[matchedKey].lng;
+                    } else {
+                        // Regional default center (Chandigarh / Mohali region)
+                        lat = 30.7333;
+                        lng = 76.7794;
+                    }
+                }
+
                 const newProvider = {
                     name: document.getElementById("new-name").value.trim(),
                     service: service,
                     area: area,
                     phone: document.getElementById("new-phone").value.trim(),
-                    lat: coordinates.lat,
-                    lng: coordinates.lng,
+                    lat: lat,
+                    lng: lng,
                     rating: "New",
                     reviews: 0,
                     price: "₹" + document.getElementById("new-price").value,
@@ -2028,6 +3308,16 @@
                     }).select().single();
                     if (error) throw error;
                     providers.push({ ...data, rating: "New", reviews: 0 });
+                    const savedListings = JSON.parse(localStorage.getItem("nearyou-providers") || "[]");
+                    const localListings = Array.isArray(savedListings) ? savedListings : [];
+                    const alreadySaved = localListings.some(function (provider) { return provider.name === newProvider.name; });
+                    if (!alreadySaved) {
+                        localListings.unshift(newProvider);
+                        localStorage.setItem("nearyou-providers", JSON.stringify(localListings));
+                    }
+                    if (window.NearmeTracker) {
+                        NearmeTracker.logEvent("provider_submitted", { service: newProvider.service, area: newProvider.area, name: newProvider.name });
+                    }
                 } else {
                     providers.push(newProvider);
                     const listingsToSave = providers.filter(function (provider) { return provider.reviews === 0; });
@@ -2035,7 +3325,14 @@
                 }
                 document.getElementById("form-message").textContent = "Your service has been added to the directory!";
                 document.getElementById("provider-form").reset();
-                userLocation = null;
+                document.getElementById("new-lat").value = "";
+                document.getElementById("new-lng").value = "";
+                document.getElementById("provider-location-status").textContent = "";
+                const pBtn = document.getElementById("providerLocationBtn");
+                if (pBtn) {
+                    pBtn.classList.remove("active", "loading");
+                    pBtn.textContent = "📍 Detect";
+                }
                 document.getElementById("area-search").value = "";
                 document.getElementById("service-search").value = "all";
                 selectedCategory = "all";
@@ -2056,31 +3353,64 @@
 
         // Load shared listings and the current browser's bookings.
         async function initializePage() {
+            // Load any user-listed providers from localStorage
+            let localUserProviders = [];
+            try {
+                localUserProviders = JSON.parse(localStorage.getItem("nearyou-providers") || "[]");
+                if (!Array.isArray(localUserProviders)) localUserProviders = [];
+            } catch (e) { localUserProviders = []; }
+
             try {
                 const response = await fetch(SUPABASE_URL + "/rest/v1/providers?select=*&order=created_at.desc", {
                     headers: { "apikey": SUPABASE_ANON_KEY, "Authorization": "Bearer " + SUPABASE_ANON_KEY }
                 });
                 const rows = await response.json().catch(function () { return []; });
                 if (!response.ok) throw new Error(rows.message || rows.hint || response.statusText);
-                // Put real listings before the large sample directory so new listings
-                // appear on the first page instead of being hidden behind Load more.
-                providers = rows.map(function (row) { return { ...row, rating: row.rating || "New", reviews: row.reviews || 0 }; }).concat(providers);
+                // Put real listings from Supabase first, followed by sample demo providers, then local user-listed
+                const liveNames = new Set(rows.map(r => r.name));
+                const remainingSamples = sampleProviders.filter(sp => !liveNames.has(sp.name));
+                const allKnownNames = new Set([...liveNames, ...remainingSamples.map(s => s.name)]);
+                const uniqueLocalProviders = localUserProviders.filter(p => !allKnownNames.has(p.name));
+                providers = applyProviderLocalOverrides(
+                    rows.map(function (row) { return { ...row, rating: row.rating || "New", reviews: row.reviews || 0 }; })
+                        .concat(remainingSamples)
+                        .concat(uniqueLocalProviders)
+                );
             } catch (error) {
                 console.error("Provider load error", error);
-                document.getElementById("form-message").textContent = "Could not load Supabase providers: " + error.message;
+                // Supabase unavailable — keep sample + locally saved providers
+                const sampleNames = new Set(sampleProviders.map(sp => sp.name));
+                const uniqueLocalProviders = localUserProviders.filter(p => !sampleNames.has(p.name));
+                providers = applyProviderLocalOverrides([...sampleProviders, ...uniqueLocalProviders]);
             }
 
             if (sb) {
                 const appointmentResult = await sb.from("appointments").select("*").order("created_at", { ascending: false });
                 if (appointmentResult.error) {
                     console.error("Appointment load error", appointmentResult.error);
-                    document.getElementById("form-message").textContent = "Providers loaded. Appointments could not load: " + appointmentResult.error.message;
                 } else {
                     appointments = appointmentResult.data;
                 }
             }
+
+            // Restore location UI from localStorage if previously detected
+            if (userLocation) {
+                const savedName = localStorage.getItem("nearme-location-name") || "Your Location";
+                const areaInput = document.getElementById("area-search");
+                const locStatus = document.getElementById("location-status");
+                const locBtn = document.querySelector(".location-btn");
+                if (areaInput) areaInput.value = "📍 " + savedName;
+                if (locStatus) locStatus.textContent = "✓ Location active (" + savedName + "). Showing nearest services first.";
+                if (locBtn) {
+                    locBtn.classList.add("active");
+                    locBtn.classList.remove("loading");
+                    locBtn.innerHTML = "✓ Near me";
+                }
+            }
+
             searchProviders();
             renderAppointments();
+            restoreOAuthDraft();
         }
         initializePage();
     </script>
